@@ -1,33 +1,49 @@
-id,name_vn,type,grade,element,effect_type,effect_value,req_realm,max_stack,description,lore
-iron_talisman,Thiết Phù Hộ Thân,artifact,1,None,def_buff,8,qi_refining,1,Bùa hộ thân giảm sát thương vật lý,Pháp khí sơ cấp của tán tu
-wind_boots,Phong Hành Lý,artifact,1,None,speed_boost,10,qi_refining,1,Giày tăng tốc độ di chuyển,Thợ rèn vùng cao luyện chế
-water_bracelet,Thủy Linh Ngọc Trạc,artifact,2,Thủy,heal_mp,60,foundation,1,Vòng ngọc tăng hồi phục linh lực hệ thủy,Ngọc lấy từ linh hồ
-fire_ring,Xích Viêm Linh Giới,artifact,2,Hỏa,stat_boost,20,foundation,1,Nhẫn tăng uy lực công pháp hỏa hệ,Thưởng nội môn Xích Viêm Cốc
-metal_gauntlet,Kim Cương Hộ Thủ,artifact,2,Kim,def_buff,25,foundation,1,Hộ thủ tăng phòng ngự cận chiến,Thợ rèn Kim Kiếm Môn chế tác
-earth_belt,Hậu Thổ Kiên Đai,artifact,2,Thổ,def_buff,30,foundation,1,Đai tăng độ chịu đòn và ổn định thân thể,Đúc từ long mạch thổ địa
-wood_pendant,Mộc Linh Hộ Tâm Kính,artifact,2,Mộc,heal_hp,80,foundation,1,Hộ tâm hồi phục sinh cơ nhẹ theo thời gian,Mộc tộc truyền thừa
-five_ghost_banner,Ngũ Quỷ Linh Phan,artifact,3,None,stat_boost,35,core_formation,1,Pháp bảo tăng lực nhưng ảnh hưởng tâm trí,Vật phẩm tà đạo nguy hiểm
-azure_jade_armor,Thanh Ngọc Linh Giáp,artifact,3,None,def_buff,60,core_formation,1,Giáp ngọc cổ tăng phòng thủ vượt Trúc Cơ,Tam đại linh giáp trung châu
-thunder_seal,Lôi Ấn Chi Giáp,artifact,3,Kim,stat_boost,50,core_formation,1,Ấn giáp chứa lôi kim chi lực tăng bộc phát sát thương,Luyện trong thiên lôi
-flame_spear,Liệt Diễm Thương,artifact,3,Hỏa,stat_boost,70,core_formation,1,Trường thương hỏa hệ tăng sát thương xuyên phá,Luyện từ xương hỏa thú cổ
-jade_sword,Ngọc Ảnh Kiếm,artifact,3,Mộc,stat_boost,65,core_formation,1,Kiếm mộc hệ tăng tốc độ xuất chiêu và linh hoạt,Kiếm truyền thừa sơn lâm
-stone_shield,Cổ Thạch Thuẫn,artifact,3,Thổ,def_buff,80,core_formation,1,Thuẫn đá cổ tăng phòng thủ diện rộng,Khắc từ nham thạch linh mạch
-azure_silk_robe,Thanh Vân Pháp Bào,artifact,3,Thủy,def_buff,55,core_formation,1,Pháp bào tăng né tránh và giảm sát thương pháp thuật,Dệt từ tơ linh thủy
-storm_bracers,Phong Lôi Hộ Uyển,artifact,3,Kim,stat_boost,75,core_formation,1,Hộ uyển tăng tốc độ ra đòn và phản ứng,Thuộc bảo của tông lôi cổ
-nascent_mirror,Nguyên Anh Chiếu Tâm Kính,artifact,4,None,stat_boost,80,nascent_soul,1,Gương tăng khả năng thấu hiểu công pháp,Di vật cổ tiên nhân
-heaven_sword_seal,Thiên Kiếm Hộ Ấn,artifact,4,Kim,stat_boost,100,nascent_soul,1,Ấn kiếm tăng kiếm ý và khả năng chém phá không gian,Bảo vật thất truyền kiếm tông
-dragon_scale_robe,Long Lân Đạo Bào,artifact,4,None,def_buff,120,nascent_soul,1,Đạo bào từ vảy long cổ tăng phòng thủ cực cao,Không thể tái tạo nhân tạo
-phoenix_feather_mantle,Phượng Vũ Linh Bào,artifact,4,Hỏa,stat_boost,110,nascent_soul,1,Áo choàng tăng hồi phục và hỏa kháng cực mạnh,Chỉ xuất hiện sau tái sinh phượng hoàng
-turtle_core_armor,Huyền Quy Linh Giáp,artifact,4,Thủy,def_buff,130,nascent_soul,1,Giáp trụ cực nặng tăng phòng thủ tuyệt đối,Vỏ quy cổ dưới vực sâu
-void_ring,Hư Không Nạp Giới,artifact,5,None,inventory_expand,5,deity_transform,1,Nhẫn mở không gian chứa đồ riêng biệt,Hiếm như thần khí cổ
-chaos_bead,Hỗn Nguyên Linh Châu,artifact,5,None,stat_boost,200,deity_transform,1,Châu chứa nguyên khí khai thiên tăng toàn diện sức mạnh,Truyền thuyết viễn cổ
-world_origin_core,Thế Giới Nguyên Châu,artifact,5,None,stat_boost,300,deity_transform,1,Lõi năng lượng nguyên thủy tăng toàn bộ thuộc tính,Chỉ tồn tại trong truyền thuyết khai thiên
-storm_eye_amulet,Phong Nhãn Linh Phù,artifact,3,Phong,speed_boost,40,core_formation,1,Phù tăng phản xạ và tốc độ di chuyển trong chiến đấu,Khắc từ tinh hạch phong yêu
-obsidian_mask,Hắc Diện Linh Diện,artifact,3,Âm,def_buff,70,core_formation,1,Mặt nạ che giấu khí tức và tăng kháng huyễn thuật,Tà tu thường dùng
-sunfire_greaves,Liệt Dương Hộ Cước,artifact,3,Hỏa,speed_boost,60,core_formation,1,Giày tăng tốc độ và bùng nổ di chuyển,Hấp thu tinh hỏa địa mạch
-river_soul_necklace,Trường Hà Linh Lạc,artifact,4,Thủy,heal_mp,120,nascent_soul,1,Trang sức giúp hồi phục linh lực liên tục khi giao chiến,Ngưng tụ từ long mạch thủy lưu
-iron_mountain_plate,Thiết Sơn Linh Giáp,artifact,4,Thổ,def_buff,160,nascent_soul,1,Giáp nặng tăng phòng thủ cực hạn nhưng giảm tốc độ,Đúc từ lõi núi cổ
-starfall_cloak,Thiên Tinh Pháp Bào,artifact,4,None,stat_boost,140,nascent_soul,1,Áo choàng hấp thu thiên tinh tăng toàn diện thuộc tính,Dệt từ tinh sa rơi
-abyssal_core_ring,Uyên Hạch Linh Giới,artifact,5,Âm,stat_boost,260,deity_transform,1,Nhẫn chứa năng lượng vực sâu tăng sức mạnh bản nguyên,Cấm vật cổ đại
-sun_moon_jade,Nhật Nguyệt Song Ngọc,artifact,5,None,stat_boost,280,deity_transform,1,Ngọc cân bằng âm dương tăng toàn bộ chỉ số,Truyền thuyết cân bằng thiên đạo
-eternal_void_bracelet,Vĩnh Hằng Hư Giới Trạc,artifact,5,Hư Không,inventory_expand,10,deity_transform,1,Vòng mở rộng không gian chứa vật phẩm lớn hơn nhiều lần,Không gian pháp tắc cổ xưa
+id,name_vn,type,element,mp_cost,power,effect,effect_value,element_bonus_mult,realm_id,description
+metal_slash,Kim Nguyên Kiếm,kểm,Kim,5,12,damage,0,1.2,qi_refining_1,Kiếm pháp cơ bản hệ Kim chém ra kiếm khí sắc bén
+metal_pierce,Kim Cương Xuyen,Kết,kim,8,18,damage,0,1.3,qi_refining_2,Kiếm pháp hệ Kim xuyên thấu lực đạo tập trung một điểm
+metal_wave,Kim Long Ba,kểm,Kim,15,35,damage,0,1.4,qi_refining_3,Kiếm pháp cao cấp hệ Kim hóa kiếm ý thành long ba
+
+fire_palm,Hỏa Phách Chưởng,pháp,Hỏa,6,10,damage,0,1.2,qi_refining_1,Chưởng pháp hệ Hỏa đánh ra ngọn lửa nóng cháy
+fire_fist,Hỏa Diệm Quyền,pháp,Hỏa,10,20,damage,0,1.3,qi_refining_2,Quyền pháp hệ Hỏa bao phủ song quyền trong hỏa diệm
+fire_wave,Phấn Thiên Hỏa,pháp,Hỏa,18,40,damage,0,1.5,qi_refining_3,Pháp thuật hệ Hỏa triệu hồi hỏa ba quét sạch kẻ địch
+
+water_needle,Thủy Nguyên Châm,pháp,Thủy,4,8,damage,0,1.1,qi_refining_1,Pháp thuật hệ Thủy bắn ra ngàn kim châm linh thủy
+water_shield,Thủy Lian Trận,pháp,Thủy,12,0,guard,15,1.2,qi_refining_2,Phòng ngự thuật hệ Thủy tạo khiên nước bảo vệ
+water_drake,Thủy Long Ngạ,pháp,Thủy,20,45,damage,0,1.4,qi_refining_3,Pháp thuật cao cấp hệ Thủy hóa thành thủy long công kích
+
+wood_heal,Mộc Nguyên Hồi Xuân,pháp,Mộc,8,0,heal,25,1.1,qi_refining_1,Công pháp trị liệu hệ Mộc hồi phục sinh cơ
+wood_bind,Mộc Trúc Chú,pháp,Mộc,10,15,damage,0,1.2,qi_refining_2,Pháp thuật hệ Mộc rễ cây trói buộc đối thủ
+wood_thorn,Mộc Gai Trận,pháp,Mộc,18,38,damage,0,1.3,qi_refining_3,Pháp thuật hệ Mộc triệu hồi gai mộc tấn công diện rộng
+
+earth_wall,Thổ Nguyên Bích,pháp,Thổ,6,0,guard,12,1.1,qi_refining_1,Phòng ngự thuật hệ Thổ tạo tường đất chắn sát thương
+earth_spike,Địa Gai Trận,pháp,Thổ,12,22,damage,0,1.3,qi_refining_2,Pháp thuật hệ Thổ triệu hồi gai đá từ lòng đất
+earth_quake,Địa Chấn,pháp,Thổ,22,48,damage,0,1.4,qi_refining_3,Pháp thuật cao cấp hệ Thổ gây động đất chấn thương
+
+sword_rain,Kiếm Vũ,kểm,None,15,30,multi_hit,3,1.1,foundation_1,Kiếm pháp vô hệ triệu hồi kiếm vũ công kích liên hồi
+thunder_strike,Lôi Đình Nhất Kích,pháp,Kim,20,45,stun,1,1.5,foundation_1,Pháp thuật hệ Kim triệu hồi lôi đình choáng đối thủ
+flame_armor,Hỏa Giáp,pháp,Hỏa,18,0,guard,25,1.3,foundation_1,Pháp thuật hệ Hỏa tạo giáp lửa bảo vệ và phản đòn
+frost_bite,Băng Sương Chỉ,pháp,Thủy,15,35,dot,12,1.4,foundation_1,Pháp thuật hệ Thủy gây sát thương lan theo thời gian
+nature_bless,Tự Nhiên Chúc Phúc,pháp,Mộc,25,0,heal,60,1.2,foundation_2,Công pháp trị liệu cao cấp hồi phục lớn
+stone_form,Thạch Hóa Chi Thân,pháp,Thổ,20,0,guard,50,1.5,foundation_2,Phòng ngự cực mạnh hệ Thổ hóa thân thành đá
+storm_blade,Phong Lôi Kiếm,kểm,Kim,28,55,damage,0,1.6,foundation_2,Kiếm pháp kết hợp phong lôi công kích mạnh
+void_step,Hư Không Bước,pháp,None,12,0,speed_boost,30,1.1,foundation_2,Công pháp thân pháp di chuyển tức thời tăng tốc
+
+golden_light,Kim Quang Chiếu,kểm,Kim,35,70,damage,0,1.5,core_formation_1,Kiếm pháp cao cấp hệ Kim bắn ra kim quang xuyên không
+inferno,Nghiệt Diệm,pháp,Hỏa,40,85,damage,0,1.6,core_formation_1,Pháp thuật hỏa hệ tạo biển lửa thiêu đốt mọi thứ
+tsunami,Thương Hải,pháp,Thủy,38,80,damage,0,1.5,core_formation_1,Pháp thuật thủy hệ triệu hồi hải啸 quét sạch
+life_stream,Sinh Mệnh Chi Tuyền,pháp,Mộc,30,0,full_heal,0,1.3,core_formation_1,Công pháp trị liệu cực hạn hồi toàn bộ HP
+earth_prison,Địa Ngục Trấn,pháp,Thổ,32,75,stun,2,1.4,core_formation_2,Pháp thuật thổ hệ giam cầm và choáng đối thủ
+sword_domain,Kiếm Vực,kểm,None,45,95,damage,0,1.7,core_formation_2,Tuyệt kỹ kiếm đạo tạo kiếm vực sát thương diện rộng
+mana_burn,Linh Lực Tiêu,pháp,None,35,50,mp_burn,40,1.2,core_formation_2,Pháp thuật rút MP đối thủ làm suy yếu
+
+nascent_blade,Nguyên Anh Kiếm,kểm,Kim,60,140,damage,0,1.8,nascent_soul_1,Tuyệt kỹ Nguyên Anh kiếm ý cắt không gian
+soul_fire,Vong Hồn Nghiệt,pháp,Hỏa,65,150,damage,0,1.9,nascent_soul_1,Pháp thuật hỏa cấp Nguyên Anh thiêu cháy linh hồn
+void_tide,Hư Không Triều,pháp,Thủy,58,135,damage,0,1.7,nascent_soul_1,Pháp thuật thủy hệ Nguyên Anh lan hư không
+world_tree,Thọ Giới Giáng Lâm,pháp,Mộc,70,0,full_heal,0,1.6,nascent_soul_2,Công pháp cực hạn Nguyên Anh triệu hồi thế giới chi thụ
+
+deity_strike,Thần Lôi Nhất Kích,pháp,Kim,100,250,damage,0,2.0,deity_transform_1,Thần thuật Nguyên Anh cao cấp triệu hồi thiên lôi
+chaos_flame,Hỗn Nguyên Hỏa,pháp,Hỏa,110,270,damage,0,2.1,deity_transform_1,Hỗn nguyên hỏa thiêu rụi mọi chướng ngại
+infinity_ocean,Vô Biên Hải,pháp,Thủy,95,240,damage,0,1.9,deity_transform_1,Thủy thuật cực hạn tạo hải dương vô tận
+cosmic_heal,Vũ Trụ Sinh Mệnh,pháp,Mộc,80,0,full_heal,0,1.8,deity_transform_2,Công pháp trị liệu tối thượng hồi phục toàn diện
+basic_strike,Đánh Thường,Pháp thuật,None,0,5,damage,0,1.0,mortal,Đòn tấn công cơ bản không tốn linh lực
+earth_stomp,Thổ Trấn,Pháp thuật,Thổ,15,25,damage,0,1.3,foundation_1,Dậm chân gây chấn động đất sát thương diện rộng

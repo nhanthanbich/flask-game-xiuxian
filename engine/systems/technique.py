@@ -110,5 +110,15 @@ class TechniqueSystem:
     @staticmethod
     def _normalize(row: dict) -> dict:
         data = dict(row)
-        data["realm_id"] = data.get("realm_id") or data.get("req_realm") or "qi_refining"
+        # Support both 'realm_id' and 'req_realm' fields
+        data["realm_id"] = data.get("realm_id") or data.get("req_realm") or "qi_refining_1"
+        # Ensure all required fields exist with defaults
+        data.setdefault("mp_cost", 10)
+        data.setdefault("power", 10)
+        data.setdefault("effect", "damage")
+        data.setdefault("effect_value", 0)
+        data.setdefault("element_bonus_mult", 1.0)
+        data.setdefault("element", "None")
+        data.setdefault("description", "")
+        data.setdefault("type", "Pháp thuật")
         return data

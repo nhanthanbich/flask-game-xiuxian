@@ -120,7 +120,7 @@ class CombatSystem:
 
         usable = [
             techniques[tid] for tid in enemy_state.get("skill_ids", [])
-            if tid in techniques and enemy_state["mp"] >= int(techniques[tid]["mp_cost"])
+            if tid in techniques and enemy_state["mp"] >= int(techniques[tid].get("mp_cost", 10))
         ]
         if usable:
             tech = random.choice(usable)
@@ -128,7 +128,7 @@ class CombatSystem:
                 tech,
                 enemy_state,
                 player_state,
-                attacker_name=f"{enemy_state['name']} dung {tech['name_vn']}",
+                attacker_name=f"{enemy_state['name']} dung {tech.get('name_vn', 'công pháp')}",
                 root_element=enemy_state["element"],
                 target_element=player_state["element"],
                 target_defense=player_state.get("def_buff", 0),
@@ -169,7 +169,7 @@ class CombatSystem:
         target_element: str,
         target_defense: int = 0,
     ) -> list[str]:
-        mp_cost = int(tech["mp_cost"])
+        mp_cost = int(tech.get("mp_cost", 10))
         if attacker["mp"] < mp_cost:
             self._regen_mp(attacker)
             return [f"{attacker_name} khong du MP va hoi phuc linh luc."]
@@ -178,9 +178,9 @@ class CombatSystem:
         hits = self._effect_hits(tech)
         total = 0
         for _ in range(hits):
-            base = max(1, int(tech["power"]) + attacker["attack"] - target_defense)
-            base = self._apply_root_technique_rules(base, root_element, tech["element"])
-            base = self._apply_element_mult(base, tech["element"], target_element)
+            base = max(1, int(tech.get("power", 10)) + attacker["attack"] - target_defense)
+            base = self._apply_root_technique_rules(base, root_element, tech.get("element", "None"))
+            base = self._apply_element_mult(base, tech.get("element", "None"), target_element)
             base = int(base * float(tech.get("element_bonus_mult") or 1.0))
             target["hp"] = max(0, target["hp"] - base)
             total += base
@@ -204,7 +204,7 @@ class CombatSystem:
         elif effect == "guard":
             attacker["def_buff"] = max(attacker.get("def_buff", 0), value)
             logs.append("Phong thu tang trong luot ke tiep.")
-        elif effect == "stun" and damage >= int(tech["power"]):
+        elif effect == "stun" and damage >= int(tech.get("power", 10)):
             target["stunned"] = True
             logs.append("Doi thu bi choang.")
         elif effect == "dot":

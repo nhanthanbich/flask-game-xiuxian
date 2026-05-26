@@ -1020,14 +1020,14 @@ def view_techniques():
             f"<div class='card technique-card'>"
             f"<div class='technique-header'>"
             f"<h3 class='technique-name'>{technique['name_vn']}</h3>"
-            f"<span class='technique-element'>{technique['element']}</span>"
+            f"<span class='technique-element'>{technique.get('element', 'None')}</span>"
             f"</div>"
             f"<div class='technique-stats'>"
-            f"<div class='tech-stat'><span class='tech-stat-label'>Linh lực</span><span class='tech-stat-value'>{technique['mp_cost']}</span></div>"
-            f"<div class='tech-stat'><span class='tech-stat-label'>Hiệu quả</span><span class='tech-stat-value'>{technique['effect']}</span></div>"
+            f"<div class='tech-stat'><span class='tech-stat-label'>Linh lực</span><span class='tech-stat-value'>{technique.get('mp_cost', 10)}</span></div>"
+            f"<div class='tech-stat'><span class='tech-stat-label'>Sức mạnh</span><span class='tech-stat-value'>{technique.get('power', 10)}</span></div>"
             f"<div class='tech-stat'><span class='tech-stat-label'>Loại</span><span class='tech-stat-value'>{technique.get('type', 'Pháp thuật')}</span></div>"
             f"</div>"
-            f"<p class='technique-desc'>{technique['description']}</p>"
+            f"<p class='technique-desc'>{technique.get('description', '')}</p>"
             f"<form method='post' action='{url_for('learn', technique_id=technique['id'])}'>"
             f"<button class='btn'>Học Công Pháp</button>"
             f"</form></div>"
@@ -1318,9 +1318,10 @@ def view_combat():
             if not tid or tid not in tech.techniques:
                 continue
             t = tech.techniques[tid]
-            disabled_note = " (thiáº¿u MP)" if p["mp"] < int(t["mp_cost"]) else ""
+            mp_cost = int(t.get("mp_cost", 10))
+            disabled_note = " (thiếu MP)" if p["mp"] < mp_cost else ""
             technique_buttons.append(
-                f"<form method='post' action='{url_for('combat_use', technique_id=tid)}'><button>{t['name_vn']} - MP {t['mp_cost']}{disabled_note}</button></form>"
+                f"<form method='post' action='{url_for('combat_use', technique_id=tid)}'><button>{t.get('name_vn', tid)} - MP {mp_cost}{disabled_note}</button></form>"
             )
         logs = "".join(f"<div>{line}</div>" for line in cstate.get("logs", [])[-12:])
         return (

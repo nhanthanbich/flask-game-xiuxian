@@ -67,11 +67,11 @@ class CombatScreen:
         for tid in slots:
             if tid and tid in self.tech.techniques:
                 tech = self.tech.techniques[tid]
-                mp_ok = p_state["mp"] >= int(tech["mp_cost"])
+                mp_ok = p_state["mp"] >= int(tech.get("mp_cost", 10))
                 has_affordable = has_affordable or mp_ok
                 suffix = "" if mp_ok else " [thieu MP]"
                 options.append(
-                    f"{tech['name_vn']:18} | {tech['element']:5} | MP:{tech['mp_cost']:2}{suffix}"
+                    f"{tech.get('name_vn', tid):18} | {tech.get('element', 'None'):5} | MP:{tech.get('mp_cost', 10):2}{suffix}"
                 )
                 tids.append(tid)
         if not options:
@@ -86,7 +86,7 @@ class CombatScreen:
         choice = Renderer.menu(options)
         if choice == len(tids):
             return None
-        if p_state["mp"] < int(self.tech.techniques[tids[choice]]["mp_cost"]):
+        if p_state["mp"] < int(self.tech.techniques[tids[choice]].get("mp_cost", 10)):
             return "__recover__"
         return tids[choice]
 
@@ -100,7 +100,7 @@ class CombatScreen:
             drop = self.combat.calc_drop(e_state)
             if drop and drop in self.tech.techniques:
                 tech = self.tech.techniques[drop]
-                Renderer.line(f"Nhan duoc cong phap roi: {tech['name_vn']}.")
+                Renderer.line(f"Nhan duoc cong phap roi: {tech.get('name_vn', drop)}.")
                 if Renderer.confirm("Hoc ngay?"):
                     self._learn_drop(player, drop)
         else:

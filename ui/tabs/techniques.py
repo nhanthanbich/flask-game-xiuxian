@@ -52,7 +52,7 @@ class TechniqueTab:
         Renderer.line()
 
         options = [
-            f"{t['name_vn']:18} | {t['element']:5} | MP:{t['mp_cost']:2} | {t['description'][:32]}"
+            f"{t.get('name_vn', t['id']):18} | {t.get('element', 'None'):5} | MP:{t.get('mp_cost', 10):2} | {t.get('description', '')[:32]}"
             for t in learnable
         ] + ["Quay lại"]
 
