@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "saved_at": "26/05/2026 11:08",
+    "player_name": "Test",
+    "realm_id": "mortal",
+    "game_time": "01/02/Năm 1"
+  },
+  "player": {
+    "exp": 33,
+    "inventory": {
+      "qi_pill_minor": 2,
+      "red_restoration": 1
+    },
+    "name": "Test",
+    "race_confirmed": true,
+    "race_id": "human",
+    "realm_id": "mortal",
+    "root_id": "metal",
+    "technique_slots": [
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "time": {
+    "day": 1,
+    "display_short": "01/02/Năm 1",
+    "month": 2,
+    "total_days": 30,
+    "year": 1
+  },
+  "world_state": {
+    "player_sect": null,
+    "player_rank": 0,
+    "sect_power": {
+      "cloud_peak": 51,
+      "scarlet_flame": 51,
+      "wind_shadow": 51,
+      "deep_current": 51,
+      "iron_forge": 51,
+      "thunder_judgement": 51,
+      "poison_shadow": 51,
+      "golden_crane": 51,
+      "star_abyss": 51,
+      "void_flame": 51,
+      "yao_moon_alliance": 52,
+      "ancient_beast_palace": 52,
+      "blood_abyss": 49
+    },
+    "events_fired": [],
+    "npc_relations": {},
+    "npc_memories": {},
+    "combat_wins": 0,
+    "sect_contrib": 0,
+    "sim_year": 1
+  }
+}

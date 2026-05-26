@@ -3,7 +3,7 @@ Inventory and item effects.
 """
 
 from engine.core.loader import Loader
-from engine.systems.technique import REALM_ORDER
+from engine.systems.technique import TechniqueSystem
 
 ITEMS_PATH = "data/entities/items.csv"
 
@@ -11,17 +11,18 @@ ITEMS_PATH = "data/entities/items.csv"
 class ItemSystem:
     def __init__(self):
         self.items = Loader.load_by_id(ITEMS_PATH)
+        self.tech = TechniqueSystem()
 
     def ensure_inventory(self, player: dict):
         player.setdefault("inventory", {})
 
     def get_usable(self, player: dict) -> list[dict]:
         self.ensure_inventory(player)
-        player_level = REALM_ORDER.index(player["realm_id"])
+        player_level = self.tech.get_realm_index(player["realm_id"])
         return [
             item for item_id, item in self.items.items()
             if player["inventory"].get(item_id, 0) > 0
-            and REALM_ORDER.index(item["req_realm"]) <= player_level
+            and self.tech.get_realm_index(item["req_realm"]) <= player_level
         ]
 
     def add_to_inventory(self, player: dict, item_id: str, qty: int = 1):

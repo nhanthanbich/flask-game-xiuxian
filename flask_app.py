@@ -367,6 +367,11 @@ def back_to_menu():
     return redirect(url_for("index"))
 
 
+@app.get("/combat")
+def combat_alias():
+    return redirect(url_for("game", tab="combat"))
+
+
 @app.get("/game")
 def game():
     if "game" not in session:

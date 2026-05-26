@@ -3,7 +3,7 @@ World and sect system.
 """
 
 from engine.core.loader import Loader
-from engine.systems.technique import REALM_ORDER
+from engine.systems.technique import TechniqueSystem
 
 SECTS_PATH = "data/entities/sects.csv"
 WORLD_EVENTS_PATH = "data/entities/world_events.csv"
@@ -19,6 +19,7 @@ class WorldSystem:
         self.sect_techniques = Loader.load(SECT_TECHNIQUES_PATH)
         self.secret_realms = Loader.load_by_id(SECRET_REALMS_PATH)
         self.sect_quests = Loader.load_by_id(SECT_QUESTS_PATH)
+        self.tech = TechniqueSystem()
 
     def default_state(self) -> dict:
         return {
@@ -62,10 +63,10 @@ class WorldSystem:
         return logs
 
     def get_available_secret_realms(self, player: dict) -> list[dict]:
-        player_level = REALM_ORDER.index(player["realm_id"])
+        player_level = self.tech.get_realm_index(player["realm_id"])
         return [
             realm for realm in self.secret_realms.values()
-            if REALM_ORDER.index(realm["min_realm"]) <= player_level
+            if self.tech.get_realm_index(realm["min_realm"]) <= player_level
         ]
 
     def get_available_quests(self, world_state: dict) -> list[dict]:
@@ -107,10 +108,10 @@ class WorldSystem:
         return True, f"Hoan thanh {quest['name_vn']}."
 
     def get_available_sects(self, player: dict) -> list[dict]:
-        player_level = REALM_ORDER.index(player["realm_id"])
+        player_level = self.tech.get_realm_index(player["realm_id"])
         return [
             sect for sect in self.sects.values()
-            if REALM_ORDER.index(sect["min_realm"]) <= player_level
+            if self.tech.get_realm_index(sect["min_realm"]) <= player_level
         ]
 
     def join_sect(self, player: dict, world_state: dict, sect_id: str) -> bool:
