@@ -1333,10 +1333,13 @@ def view_combat():
             f"<form method='post' action='{url_for('combat_flee')}'><button>Bỏ chạy</button></form>"
             f"<h3>Diá»…n biáº¿n</h3><div class='log'>{logs}</div>"
         )
-    player_level = REALM_ORDER.index(state["player"]["realm_id"])
+    # Safe realm index lookup with fallback
+    player_level = tech.get_realm_index(state["player"]["realm_id"])
+
     cards = []
     for enemy in Loader.load(ENEMIES_PATH):
-        if REALM_ORDER.index(enemy["realm_id"]) > player_level + 1:
+        enemy_level = tech.get_realm_index(enemy["realm_id"])
+        if enemy_level > player_level + 1:
             continue
         cards.append(
             f"<div class='card'><h3>{enemy['name_vn']}</h3><p>{enemy['realm_id']} | {enemy['element']} | HP {enemy['hp']}</p>"

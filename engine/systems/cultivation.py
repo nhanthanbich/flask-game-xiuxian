@@ -32,6 +32,45 @@ class CultivationSystem:
         self.realms   = Loader.load_by_id(REALMS_PATH)
         self.roots    = Loader.load_by_id(ROOTS_PATH)
 
+        # Build backward compatibility mapping for old realm IDs
+        self._build_legacy_mapping()
+
+    def _build_legacy_mapping(self):
+        """
+        Build mapping from old realm IDs (qi_refining) to new IDs (qi_refining_1).
+        For backward compatibility with old saves.
+        """
+        self.legacy_realm_map = {}
+        for realm_id in self.realms:
+            # Map old format to first sub-realm
+            # e.g., "qi_refining" -> "qi_refining_1"
+            base_name = realm_id.rsplit('_', 1)[0] if '_' in realm_id else realm_id
+            if base_name not in self.legacy_realm_map and realm_id.endswith('_1'):
+                self.legacy_realm_map[base_name] = realm_id
+
+        # Special mappings for old realm names
+        legacy_mappings = {
+            'qi_refining': 'qi_refining_1',
+            'foundation': 'foundation_1',
+            'core_formation': 'core_formation_1',
+            'nascent_soul': 'nascent_soul_1',
+            'deity_transform': 'deity_transform_1',
+            'ascension': 'great_ascension_1',  # ascension -> great_ascension_1
+        }
+        for old_id, new_id in legacy_mappings.items():
+            if old_id not in self.legacy_realm_map:
+                self.legacy_realm_map[old_id] = new_id
+
+    def normalize_realm_id(self, realm_id: str) -> str:
+        """
+        Normalize realm_id for backward compatibility.
+        Converts old IDs (qi_refining) to new IDs (qi_refining_1).
+        """
+        if realm_id in self.realms:
+            return realm_id
+        # Check legacy mapping
+        return self.legacy_realm_map.get(realm_id, realm_id)
+
     # ── Tính exp ────────────────────────────────────────────────────────
     def calc_exp(self, months: int, root_id: str,
                  technique_element: str | None = None) -> int:
@@ -64,6 +103,12 @@ class CultivationSystem:
 
     # ── Cảnh giới tiếp theo ─────────────────────────────────────────────
     def next_realm(self, realm_id: str) -> dict | None:
+        # Normalize realm_id for backward compatibility
+        realm_id = self.normalize_realm_id(realm_id)
+
+        if realm_id not in self.realms:
+            return None
+
         current_level = int(self.realms[realm_id]["level"])
         for r in Loader.load(REALMS_PATH):
             if int(r["level"]) == current_level + 1:
@@ -124,6 +169,12 @@ class CultivationSystem:
 
     # ── Hiển thị ────────────────────────────────────────────────────────
     def realm_display(self, realm_id: str) -> str:
+        # Normalize for backward compatibility
+        realm_id = self.normalize_realm_id(realm_id)
+
+        if realm_id not in self.realms:
+            return "Cảnh Giới Không Xác Định"
+
         r = self.realms[realm_id]
         return f"{r['name_vn']} ({r['name']})"
 

@@ -6,18 +6,17 @@ from engine.core.loader import Loader
 
 MAX_SLOTS = 4
 
-REALM_ORDER = [
-    "mortal",
-    "qi_refining",
-    "foundation",
-    "core_formation",
-    "nascent_soul",
-    "deity_transform",
-    "ascension",
-]
-
-
+REALMS_PATH = "data/entities/realms.csv"
 TECHNIQUES_PATH = "data/entities/techniques.csv"
+
+# Dynamically load REALM_ORDER from CSV to support expanded realms
+def _load_realm_order():
+    """Load realm order from CSV, sorted by level."""
+    realms = Loader.load(REALMS_PATH)
+    sorted_realms = sorted(realms, key=lambda r: int(r.get("level", 0)))
+    return [r["id"] for r in sorted_realms]
+
+REALM_ORDER = _load_realm_order()
 
 
 class TechniqueSystem:
@@ -34,11 +33,24 @@ class TechniqueSystem:
         elif len(slots) > MAX_SLOTS:
             del slots[MAX_SLOTS:]
 
+    def get_realm_index(self, realm_id: str) -> int:
+        """Get realm index with safe fallback."""
+        try:
+            return REALM_ORDER.index(realm_id)
+        except ValueError:
+            # Fallback: try to find by base realm name
+            base_realm = realm_id.rsplit('_', 1)[0] if '_' in realm_id else realm_id
+            for idx, r_id in enumerate(REALM_ORDER):
+                if r_id == base_realm or r_id.startswith(base_realm):
+                    return idx
+            # Return lowest level if not found
+            return 0
+
     def get_learnable(self, realm_id: str) -> list[dict]:
-        realm_level = REALM_ORDER.index(realm_id)
+        realm_level = self.get_realm_index(realm_id)
         return [
             t for t in self.techniques.values()
-            if REALM_ORDER.index(t["realm_id"]) <= realm_level
+            if self.get_realm_index(t["realm_id"]) <= realm_level
         ]
 
     def learn(self, player: dict, technique_id: str, slot_index: int):

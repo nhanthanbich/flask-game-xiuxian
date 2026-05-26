@@ -5,7 +5,7 @@ Turn-based combat system.
 import random
 
 from engine.core.loader import Loader
-from engine.systems.technique import TechniqueSystem
+from engine.systems.technique import TechniqueSystem, REALM_ORDER
 from engine.systems.race import RaceSystem
 
 ENEMIES_PATH = "data/entities/enemies.csv"
@@ -28,11 +28,34 @@ class CombatSystem:
         self.enemies = Loader.load_by_id(ENEMIES_PATH)
         self.roots = Loader.load_by_id(ROOTS_PATH)
 
+    def get_realm_index(self, realm_id: str) -> int:
+        """Get realm index with safe fallback for new realm IDs."""
+        try:
+            return REALM_ORDER.index(realm_id)
+        except ValueError:
+            # Fallback: try to find by base realm name
+            base_realm = realm_id.rsplit('_', 1)[0] if '_' in realm_id else realm_id
+            for idx, r_id in enumerate(REALM_ORDER):
+                if r_id == base_realm or r_id.startswith(base_realm):
+                    return idx
+            # Return lowest level if not found
+            return 0
+
     def spawn_player_combat(self, player: dict) -> dict:
-        stats = self.settings["realm_stats"].get(
-            player["realm_id"],
-            self.settings["realm_stats"]["qi_refining"],
-        )
+        # Get stats for current realm, with fallback logic
+        stats = self.settings["realm_stats"].get(player["realm_id"])
+
+        # If not found, try base realm name (e.g., "qi_refining" for "qi_refining_2")
+        if stats is None:
+            base_realm = player["realm_id"].rsplit('_', 1)[0]
+            stats = self.settings["realm_stats"].get(base_realm)
+
+        # Final fallback to qi_refining_1 or first available
+        if stats is None:
+            stats = self.settings["realm_stats"].get("qi_refining_1") or \
+                    self.settings["realm_stats"].get("qi_refining") or \
+                    next(iter(self.settings["realm_stats"].values()))
+
         root = self.roots.get(player.get("root_id"), {})
         race_mult = self.races.stat_mults(player.get("race_id", "human"))
         hp = int(int(stats["hp"]) * race_mult["hp"]) + int(player.get("hp_bonus", 0))

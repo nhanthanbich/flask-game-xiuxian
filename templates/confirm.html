@@ -79,28 +79,28 @@
       </div>
     </div>
 
-    <!-- Name Input Section -->
-    <div class="name-input-section">
-      <div class="input-header">
-        <span class="input-icon">✦</span>
-        <label for="player_name" class="input-label">Nhập Đạo Hiệu Của Ngươi</label>
-      </div>
-      <input
-        type="text"
-        id="player_name"
-        name="player_name"
-        class="divine-input"
-        placeholder="Đạo hiệu (để trống = Tan Tu)"
-        maxlength="20"
-        autocomplete="off"
-        value="{{ player.name }}"
-      >
-      <p class="input-hint">Tối đa 20 ký tự. Nên dùng Hán Việt hoặc tên tu tiên.</p>
-    </div>
-
     <!-- Action Buttons -->
     <div class="action-buttons-large">
       <form method="post" action="{{ url_for('confirm_game_submit') }}" class="action-form">
+        <!-- Name Input Section - INSIDE the form -->
+        <div class="name-input-section">
+          <div class="input-header">
+            <span class="input-icon">✦</span>
+            <label for="player_name" class="input-label">Nhập Đạo Hiệu Của Ngươi</label>
+          </div>
+          <input
+            type="text"
+            id="player_name"
+            name="player_name"
+            class="divine-input"
+            placeholder="Đạo hiệu (để trống = Tan Tu)"
+            maxlength="20"
+            autocomplete="off"
+            value="{{ player.name }}"
+          >
+          <p class="input-hint">Tối đa 20 ký tự. Nên dùng Hán Việt hoặc tên tu tiên.</p>
+        </div>
+
         <button class="btn-divine">
           <span class="btn-glow"></span>
           <span class="btn-content">
