@@ -1,0 +1,88 @@
+═══════════════════════════════════════════════════════════════
+     TU TIÊN KÝ - HƯỚNG DẪN CHẠY NHANH
+═══════════════════════════════════════════════════════════════
+
+📁 DI CHUYỂN ĐẾN THƯ MỤC PROJECT:
+    cd claude
+
+═══════════════════════════════════════════════════════════════
+   WEB VERSION (Flask) - KHUYÊN DÙNG ⭐
+═══════════════════════════════════════════════════════════════
+
+1️⃣ CÀI ĐẶT:
+    pip install Flask
+
+2️⃣ CHẠY:
+    python3 flask_app.py
+
+    HOẶC tự động:
+    ./run_web.sh      (Linux/macOS)
+    run_web.bat       (Windows)
+
+3️⃣ TRUY CẬP:
+    Mở trình duyệt: http://localhost:5000
+
+═══════════════════════════════════════════════════════════════
+   TERMINAL VERSION (CLI)
+═══════════════════════════════════════════════════════════════
+
+    python3 main.py
+
+═══════════════════════════════════════════════════════════════
+   LƯU Ý QUAN TRỌNG
+═══════════════════════════════════════════════════════════════
+
+✅ flask_app.py = Web version (ĐÃ NÂNG CẤP UI XIANXIA)
+✅ main.py = Terminal version
+
+✨ Web version có:
+  - Giao diện tu tiên đẹp mắt
+  - Animated Qi particles
+  - Heavenly realm effects
+  - Jade-gold palette
+  - Premium hover effects
+
+🔒 Backend KHÔNG thay đổi:
+  - Game logic nguyên bản
+  - Combat system
+  - Cultivation system
+  - Save/Load
+
+═══════════════════════════════════════════════════════════════
+   CẤU TRÚC FILES
+═══════════════════════════════════════════════════════════════
+
+flask_app.py          ← Chạy web version
+main.py               ← Chạy terminal version
+
+templates/            ← HTML templates (UI đã nâng cấp)
+  start.html          ← Màn hình bắt đầu
+  new_game.html       ← Chọn tộc hệ
+  confirm.html        ← Xác nhận nhân vật
+  game.html           ← Main game interface
+  combat.html         ← Combat screen
+
+static/css/           ← CSS styles
+  main.css            ← Main styles
+  components.css      ← Component styles
+
+engine/               ← Backend logic (KHÔNG SỬA)
+ui/                   ← Terminal UI (KHÔNG SỬA)
+data/                 ← Game data (KHÔNG SỬA)
+
+═══════════════════════════════════════════════════════════════
+   TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════
+
+❌ Lỗi "No module named 'flask'":
+   → pip install Flask
+
+❌ Port 5000 bị chiếm:
+   → Sửa flask_app.py: app.run(..., port=5001)
+
+❌ Encoding lỗi:
+   → export LANG=en_US.UTF-8
+
+═══════════════════════════════════════════════════════════════
+
+Chi tiết đầy đủ: README.md
