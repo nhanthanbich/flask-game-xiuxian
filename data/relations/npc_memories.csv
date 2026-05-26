@@ -1,0 +1,9 @@
+id,npc_id,trigger_event,memory_text,relation_delta_respect,relation_delta_trust,relation_delta_fear
+m_lam_join,elder_lam,join_sect,Nguoi da nhap mon va chap nhan gioi luat.,2,1,0
+m_lam_break,elder_lam,breakthrough,Nguoi dot pha truoc mat dong mon.,6,1,1
+m_an_join,senior_an,join_sect,Nguoi moi vao mon phai can duoc dan dat.,1,4,0
+m_an_win,senior_an,win_combat,Nguoi thang mot tran lam dong mon phan chan.,3,2,0
+m_ma_gift,merchant_ma,gift,Nguoi biet dung le vat de mo duong.,1,2,0
+m_hong_break,elder_hong,breakthrough,Hoa tam cua nguoi da duoc thu thach.,5,0,2
+m_lien_gift,sister_lien,gift,Nguoi tang le vat dung luc.,1,4,0
+m_yue_win,yao_yue,win_combat,Nguoi chien thang khien yeu toc phai de mat.,2,0,3

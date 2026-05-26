@@ -1,0 +1,28 @@
+id,category,realm_id,text
+cult_qi_1,cultivation,qi_refining,Linh khi mong manh chay qua kinh mach nhu suong som dau nui.
+cult_qi_2,cultivation,qi_refining,Nguoi dieu tuc that cham de dan dien lang xuong.
+break_qi_1,breakthrough,qi_refining,Than the nhe nhu la kho va tam thuc bat dau nghe duoc tieng linh khi.
+win_qi_1,combat_win,qi_refining,Chien thang nho be cung du de dao tam them vung.
+lose_qi_1,combat_lose,qi_refining,Linh luc tan loan nen nguoi lui lai de giu lay can co.
+cult_found_1,cultivation,foundation,Nen mong Truc Co rung len tung nhip nhu trong dong sau.
+cult_found_2,cultivation,foundation,Linh khi khong con tan man ma ket thanh dong chay on dinh.
+break_found_1,breakthrough,foundation,Dao co thanh hinh va moi hoi tho deu keo theo tieng vang cua nen mong moi.
+win_found_1,combat_win,foundation,Mot chien thang nua khac sau vao nen dao co.
+lose_found_1,combat_lose,foundation,Nen mong dao co chiu chan dong nhung chua sup do.
+cult_core_1,cultivation,core_formation,Trong dan dien co anh kim quang tu lai roi hop.
+cult_core_2,cultivation,core_formation,Kim dan con chua tron day nhung da toa ap luc tram on.
+break_core_1,breakthrough,core_formation,Kim dan ket thanh va linh ap quet qua bon phia.
+win_core_1,combat_win,core_formation,Kim dan rung khe nhu dap lai chien y vua tan.
+lose_core_1,combat_lose,core_formation,Kim dan am dam nen nguoi can be quan on lai chan nguyen.
+cult_soul_1,cultivation,nascent_soul,Than hon roi than the nua buoc roi lai quay ve dan dien.
+break_soul_1,breakthrough,nascent_soul,Nguyen anh mo mat va mot niem da co the cham den may troi.
+win_soul_1,combat_win,nascent_soul,Than thuc thu ve nen tran nay da nam trong tinh toan.
+lose_soul_1,combat_lose,nascent_soul,Nguyen anh rung dong nen than thuc can duoc an duong.
+cult_deity_1,cultivation,deity_transform,Than thuc hoa vao thien dia roi gom ve nhu song trieu.
+break_deity_1,breakthrough,deity_transform,Than y hop voi troi dat va mot buoc da khac pham nhan.
+win_deity_1,combat_win,deity_transform,Chien truong lang di nhu bi than niem ep xuong.
+lose_deity_1,combat_lose,deity_transform,Than niem tan di nen nguoi lui mot buoc de giu dao tam.
+cult_asc_1,cultivation,ascension,Linh quang phien nhien nhu loi moi tu ngoai thanh khong.
+break_asc_1,breakthrough,ascension,Thien mon mo he va tien lo khong con la truyen thuyet.
+win_asc_1,combat_win,ascension,Mot tran chien qua di nhu hat bui truoc cua troi.
+lose_asc_1,combat_lose,ascension,Tien lo gap song nhung dao tam van chua tan.

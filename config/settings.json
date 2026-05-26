@@ -1,0 +1,25 @@
+{
+  "time_speed": 1.0,
+  "combat_difficulty": 1.05,
+  "exp_rate": 1.0,
+  "drop_rate": 1.0,
+  "mp_regen_rate": 0.15,
+  "element_bonus_mult": 1.5,
+  "element_penalty_mult": 0.7,
+  "same_root_technique_bonus": 1.35,
+  "countered_root_technique_penalty": 0.2,
+  "base_exp_per_month": 18,
+  "default_sect_power": 50,
+  "combat_time_cost": 3,
+  "flee_time_cost": 1,
+  "technique_drop_chance": 0.2,
+  "realm_stats": {
+    "mortal": {"hp": 60, "mp": 15, "attack": 3},
+    "qi_refining": {"hp": 100, "mp": 45, "attack": 8},
+    "foundation": {"hp": 150, "mp": 65, "attack": 14},
+    "core_formation": {"hp": 220, "mp": 90, "attack": 24},
+    "nascent_soul": {"hp": 320, "mp": 120, "attack": 38},
+    "deity_transform": {"hp": 460, "mp": 160, "attack": 58},
+    "ascension": {"hp": 650, "mp": 220, "attack": 85}
+  }
+}

@@ -1,0 +1,503 @@
+{% extends "base.html" %}
+
+{% macro stat_bar(label, current, max, bar_class, icon='◈') %}
+<div class="stat-bar-wrap">
+  <div class="stat-label">
+    <span>
+      <span class="stat-icon">{{ icon }}</span>
+      {{ label }}
+    </span>
+    <span class="stat-value">{{ current }} / {{ max }}</span>
+  </div>
+  <div class="stat-bar">
+    <div class="stat-bar-fill {{ bar_class }}"
+         style="width: {{ ((current / max) * 100)|round if max else 0 }}%">
+    </div>
+  </div>
+  <div class="stat-glow {{ bar_class }}"></div>
+</div>
+{% endmacro %}
+
+{% block content %}
+<!-- ═══════════════════════════════════════════════════════════════
+     HEADER - Immortal Status Bar
+     ═══════════════════════════════════════════════════════════════ -->
+<header class="game-header">
+  <div class="header-cultivator">
+    <div class="header-name">{{ player.name }}</div>
+    <div class="header-realm">
+      <span class="realm-badge">{{ realm.name_vn }}</span>
+      <span class="separator">·</span>
+      <span class="root-badge">{{ root.name_vn }}</span>
+      <span class="separator">·</span>
+      <span class="race-badge">{{ race.name_vn }}</span>
+    </div>
+  </div>
+
+  <div class="header-meta">
+    <div class="header-time">
+      <span class="time-icon">☀</span>
+      Năm {{ time.year }}
+      <span class="time-separator">—</span>
+      Tháng {{ time.month }}
+    </div>
+    <div class="header-qi">
+      <span class="qi-icon">☯</span>
+      {{ sect_name }}
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <a class="btn btn-back-menu" href="{{ url_for('back_to_menu') }}" onclick="return confirm('Quay về menu chính?\\nGame hiện tại sẽ bị thoát.')">
+      <span class="action-icon">🏠</span>
+      Menu
+    </a>
+    <a class="btn btn-save" href="{{ url_for('game', tab='save') }}">
+      <span class="action-icon">📜</span>
+      Lưu Trữ
+    </a>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MAIN GAME CONTAINER
+     ═══════════════════════════════════════════════════════════════ -->
+<main class="game-container">
+
+  <!-- ═════════════════════════════════════════════════════════════
+       STATUS PANEL - Cultivation Progress
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="panel status-panel">
+    <div class="panel-ornament">
+      <span class="ornament-left">❖</span>
+      <span class="ornament-title">Tu Vi Giác Ngộ</span>
+      <span class="ornament-right">❖</span>
+    </div>
+
+    <div class="status-grid">
+      <div class="status-column">
+        <div class="status-row">
+          <span class="status-label">
+            <span class="label-icon">☯</span>
+            Đạo Hiệu
+          </span>
+          <span class="status-value highlighted">{{ player.name }}</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">
+            <span class="label-icon">✧</span>
+            Chủng Tộc
+          </span>
+          <span class="status-value">{{ race.name_vn }}</span>
+        </div>
+      </div>
+
+      <div class="status-column">
+        <div class="status-row">
+          <span class="status-label">
+            <span class="label-icon">★</span>
+            Cảnh Giới
+          </span>
+          <span class="status-value highlighted">{{ realm.name_vn }}</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">
+            <span class="label-icon">⬡</span>
+            Môn Phái
+          </span>
+          <span class="status-value">{{ sect_name }}</span>
+        </div>
+      </div>
+    </div>
+
+    {{ stat_bar("Tu Vi Tiến Độ", progress, progress_max, "bar-exp", "◈") }}
+
+    <div class="exp-display">
+      <span class="exp-current">{{ player.exp }} exp</span>
+      <span class="exp-note">thu thập linh khí thiên địa</span>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       TAB NAVIGATION - Dao Menu
+       ═════════════════════════════════════════════════════════════ -->
+  <nav class="tab-grid" role="navigation" aria-label="Main Navigation">
+    {% for key, label in tabs %}
+      <a class="btn {{ 'active' if tab == key else '' }}"
+         href="{{ url_for('game', tab=key) }}"
+         role="tab"
+         aria-selected="{{ 'true' if tab == key else 'false' }}">
+        <span class="tab-icon">
+          {% if key == 'cultivate' %}☯{% endif %}
+          {% if key == 'techniques' %}⚔{% endif %}
+          {% if key == 'world' %}🌍{% endif %}
+          {% if key == 'sect' %}🏛{% endif %}
+          {% if key == 'secret' %}🔮{% endif %}
+          {% if key == 'combat' %}⚡{% endif %}
+          {% if key == 'inventory' %}🎒{% endif %}
+          {% if key == 'relations' %}🤝{% endif %}
+          {% if key == 'timeline' %}📜{% endif %}
+          {% if key == 'save' %}💾{% endif %}
+        </span>
+        {{ label }}
+      </a>
+    {% endfor %}
+  </nav>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       CONSOLE PANEL - Heavenly Records
+       ═════════════════════════════════════════════════════════════ -->
+  {% if logs %}
+  <section class="console-panel" aria-label="Nhật Ký Thiên Đạo">
+    <div class="console-header">
+      <span class="console-icon">📜</span>
+      <span class="console-title">Thiên Đạo Nhật Ký</span>
+    </div>
+    <div class="console-content">
+      {% for line in logs %}
+        <p class="msg-system">
+          <span class="msg-time">>{{ loop.index }}</span>
+          {{ line }}
+        </p>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ═════════════════════════════════════════════════════════════
+       MAIN CONTENT PANEL
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="panel main-panel">
+    <div class="panel-content">
+      {{ body|safe }}
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER - Spiritual Attribution
+     ═══════════════════════════════════════════════════════════════ -->
+<footer class="spirit-footer">
+  <div class="footer-content">
+    <span class="footer-text">Tu Tiên Ký — The Path of Immortal Cultivation</span>
+  </div>
+</footer>
+
+<style>
+  /* Panel Decorative Ornaments */
+  .panel-ornament {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid rgba(79, 209, 165, 0.2);
+  }
+
+  .ornament-left, .ornament-right {
+    color: var(--jade-essence);
+    font-size: 1.2em;
+    opacity: 0.7;
+  }
+
+  .ornament-title {
+    font-family: var(--font-script);
+    color: var(--celestial-gold);
+    font-size: 1.15em;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 20px rgba(255, 200, 71, 0.4);
+  }
+
+  /* Status Rows */
+  .status-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-xs) 0;
+    border-bottom: 1px solid rgba(79, 209, 165, 0.08);
+  }
+
+  .status-label {
+    font-family: var(--font-spirit);
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--spirit-silver);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .label-icon {
+    color: var(--jade-essence);
+    font-size: 1em;
+    opacity: 0.8;
+  }
+
+  .status-value {
+    font-weight: 600;
+    color: var(--moonlight-silver);
+  }
+
+  .status-value.highlighted {
+    color: var(--celestial-gold);
+    text-shadow: 0 0 15px rgba(255, 200, 71, 0.3);
+  }
+
+  /* Stat Bar Glow Effect */
+  .stat-glow {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: radial-gradient(ellipse at center, rgba(79, 209, 165, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .stat-icon {
+    color: var(--jade-glow);
+    margin-right: var(--space-xs);
+  }
+
+  .stat-value {
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  /* EXP Display */
+  .exp-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(20, 20, 30, 0.5);
+    border-left: 3px solid var(--jade-essence);
+    border-radius: 2px;
+  }
+
+  .exp-current {
+    font-family: var(--font-elder);
+    color: var(--celestial-gold);
+    font-weight: 600;
+    font-size: 0.95em;
+    text-shadow: 0 0 10px rgba(255, 200, 71, 0.3);
+  }
+
+  .exp-note {
+    font-family: var(--font-elder);
+    color: var(--spirit-silver);
+    font-size: 0.75em;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  /* Header Badges */
+  .header-cultivator {
+    position: relative;
+    z-index: 1;
+  }
+
+  .realm-badge, .root-badge, .race-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    background: rgba(25, 25, 35, 0.6);
+    border-radius: 2px;
+    font-size: 0.9em;
+  }
+
+  .realm-badge {
+    color: var(--celestial-gold);
+  }
+
+  .root-badge {
+    color: var(--jade-essence);
+  }
+
+  .race-badge {
+    color: var(--spirit-silver);
+  }
+
+  .separator {
+    margin: 0 var(--space-xs);
+    opacity: 0.5;
+  }
+
+  /* Time and Qi Icons */
+  .time-icon, .qi-icon {
+    margin-right: var(--space-xs);
+    font-size: 1.1em;
+  }
+
+  .time-separator {
+    margin: 0 var(--space-xs);
+    opacity: 0.4;
+  }
+
+  /* Save Button Style */
+  .btn-save {
+    border-color: var(--celestial-gold);
+    background: linear-gradient(135deg, rgba(40, 30, 20, 0.8) 0%, rgba(50, 40, 25, 0.8) 100%);
+  }
+
+  .btn-save:hover {
+    background: linear-gradient(135deg, rgba(50, 40, 25, 0.95) 0%, rgba(60, 50, 30, 0.95) 100%);
+    box-shadow: var(--shadow-gold);
+  }
+
+  /* Back Menu Button Style */
+  .btn-back-menu {
+    border-color: var(--spirit-silver);
+    background: linear-gradient(135deg, rgba(25, 25, 35, 0.8) 0%, rgba(35, 35, 45, 0.8) 100%);
+  }
+
+  .btn-back-menu:hover {
+    background: linear-gradient(135deg, rgba(35, 35, 45, 0.95) 0%, rgba(45, 45, 55, 0.95) 100%);
+    border-color: var(--jade-essence);
+    box-shadow: 0 0 15px rgba(79, 209, 165, 0.3);
+  }
+
+  .action-icon {
+    margin-right: var(--space-xs);
+    opacity: 0.8;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  /* Tab Icons */
+  .tab-icon {
+    display: block;
+    font-size: 1.4em;
+    margin-bottom: var(--space-xs);
+    opacity: 0.8;
+  }
+
+  .active .tab-icon {
+    opacity: 1;
+  }
+
+  /* Console Panel Enhancement */
+  .console-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid rgba(79, 209, 165, 0.2);
+  }
+
+  .console-icon {
+    font-size: 1.5em;
+    opacity: 0.6;
+  }
+
+  .console-title {
+    font-family: var(--font-script);
+    color: var(--jade-essence);
+    font-size: 0.95em;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .console-content {
+    max-height: 45vh;
+    overflow-y: auto;
+  }
+
+  .msg-time {
+    color: rgba(79, 209, 165, 0.5);
+    font-family: var(--font-spirit);
+    font-size: 0.7em;
+    margin-right: var(--space-sm);
+  }
+
+  /* Main Panel Content */
+  .panel-content {
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Footer */
+  .spirit-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(5, 5, 8, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(79, 209, 165, 0.15);
+    z-index: 99;
+  }
+
+  .footer-content {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .footer-text {
+    color: var(--spirit-silver);
+    font-size: 0.75em;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 559px) {
+    .game-header {
+      grid-template-columns: 1fr;
+      gap: var(--space-sm);
+    }
+
+    .header-meta {
+      order: -1;
+      text-align: left;
+    }
+
+    .header-actions {
+      justify-content: stretch;
+    }
+
+    .btn-save {
+      width: 100%;
+    }
+
+    .status-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tab-icon {
+      font-size: 1.2em;
+    }
+  }
+</style>
+{% endblock %}
