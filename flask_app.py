@@ -46,6 +46,8 @@ def default_player(root_id="metal", race_id="human", name="Tan Tu"):
         "realm_id": "mortal",
         "root_id": root_id,
         "race_id": race_id,
+        "age": 15,
+        "gender": "Nam",
         "exp": 0,
         "technique_slots": [None, None, None, None],
         "inventory": {"red_restoration": 1, "qi_pill_minor": 2},
@@ -215,14 +217,15 @@ def confirm_game_submit():
     if not pending:
         return redirect(url_for("index"))
 
-    # Get player name from form
     player_name = request.form.get("player_name", "").strip()
-    # Use fallback if empty
     if not player_name:
         player_name = "Tan Tu"
 
-    # Update player name
+    player_gender = request.form.get("player_gender", "Nam").strip() or "Nam"
+
     pending["player"]["name"] = player_name
+    pending["player"]["gender"] = player_gender
+    pending["player"]["age"] = 15
     pending["player"]["race_confirmed"] = True
 
     session["game"] = pending
@@ -287,6 +290,14 @@ def ensure_defaults(state):
     items.ensure_inventory(state["player"])
     state["player"].setdefault("race_id", "human")
     state["player"].setdefault("race_confirmed", True)
+    state["player"].setdefault("age", 15)
+    state["player"].setdefault("gender", "Nam")
+    state["player"].setdefault("realm_id", "mortal")
+    state["player"].setdefault("cultivation_pressure", 0)
+    state["player"].setdefault("breakthrough_ready", False)
+    state["player"].setdefault("breakthrough_risk", 0)
+    state["world_state"].setdefault("npc_events_fired", [])
+    state["world_state"].setdefault("world_history", [])
 
 
 def current_time(state):
@@ -329,8 +340,7 @@ def render_page(tab, body):
     tabs = [
         ("cultivate", "Tu luyện"),
         ("techniques", "Công pháp"),
-        ("world", "Thế giới"),
-        ("sect", "Nội môn"),
+        ("world", "Tông môn"),
         ("secret", "Bí cảnh"),
         ("combat", "Chiến đấu"),
         ("inventory", "Túi đồ"),
@@ -390,7 +400,7 @@ def game():
         "cultivate": view_cultivate,
         "techniques": view_techniques,
         "world": view_world,
-        "sect": view_sect,
+        "sect": view_world,
         "secret": view_secret,
         "combat": view_combat,
         "inventory": view_inventory,
@@ -463,10 +473,18 @@ def cultivate(months):
     player = state["player"]
     time = current_time(state)
     gain = cult.calc_player_exp(months, player, races)
-    player["exp"] += gain
+    adjusted_gain, efficiency_message = cult.apply_pressure_to_exp(player, gain)
+    player["exp"] += adjusted_gain
+
+    if efficiency_message:
+        log(state, efficiency_message)
+    if adjusted_gain != gain:
+        log(state, f"Hiệu quả tu luyện giảm: {adjusted_gain}/{gain} exp thực nhận.")
 
     # Add cultivation pressure
-    pressure_result = cult.add_cultivation_pressure(player, gain)
+    pressure_result = cult.add_cultivation_pressure(player, adjusted_gain)
+    if pressure_result.get("flavor"):
+        log(state, pressure_result["flavor"])
     if pressure_result.get("event") == "táu_hoả_nhập_ma":
         log(state, "CẢNH BÁO: " + pressure_result["message"])
         # Apply HP loss
@@ -479,7 +497,7 @@ def cultivate(months):
     elif pressure_result.get("message"):
         log(state, pressure_result["message"])
     else:
-        log(state, f"Bế quan {months} tháng, nhận {gain} exp.")
+        log(state, f"Bế quan {months} tháng, nhận {adjusted_gain} exp.")
 
     time.advance_months(months)
     tick_time(state, time)
@@ -516,10 +534,12 @@ def breakthrough():
         # Add to world history
         if "world_history" not in state["world_state"]:
             state["world_state"]["world_history"] = []
-        state["world_state"]["world_history"].append({
+        history_entry = {
             "year": time.year,
             "event": f"{player['name']} đột phá {realm['name_vn']}"
-        })
+        }
+        if history_entry not in state["world_state"]["world_history"]:
+            state["world_state"]["world_history"].append(history_entry)
 
         # NPC reactions
         npc_knowledge = npc.process_npc_timelines(time.year, state)
@@ -580,7 +600,7 @@ def breakthrough_seclusion():
         tick_time(state, time)
         set_time(state, time)
         if result.get("hp_loss_percent"):
-            log(state, f"Bế quan {seclusion_time} tháng nhưng {result['message']}")
+            log(state, f"Bế quan thất bại: {result['message']}")
         else:
             log(state, result.get("message", "Bế quan đột phá thất bại."))
     save_state(state)
@@ -592,14 +612,20 @@ def breakthrough_wait():
     """Trì hoãn đột phá - tăng áp lực và rủi ro."""
     state = get_state()
     player = state["player"]
+    time = current_time(state)
 
     result = cult.attempt_breakthrough(player, mode="wait")
     danger_risk = result.get("risk", 0)
+    delay_months = result.get("advance_months", 1)
+
+    time.advance_months(delay_months)
+    tick_time(state, time)
+    set_time(state, time)
 
     if danger_risk > 70:
         log(state, f"CẢNH BÁO ĐỎ: Rủi ro trì hoãn đã đạt {danger_risk}%! Nên đột phá ngay.")
     else:
-        log(state, f"Trì hoãn đột phá. {result['message']}")
+        log(state, f"Trì hoãn đột phá {delay_months} tháng. {result['message']}")
 
     save_state(state)
     return redirect(url_for("game", tab="cultivate"))
@@ -629,6 +655,34 @@ def join(sect_id):
     return redirect(url_for("game", tab="world"))
 
 
+@app.post("/leave")
+def leave_sect():
+    state = get_state()
+    if not state:
+        return redirect(url_for("game"))
+    if world.leave_sect(state["player"], state["world_state"]):
+        log(state, "Đã rời tông môn.")
+    else:
+        log(state, "Ngươi chưa có tông môn để rời.")
+    save_state(state)
+    return redirect(url_for("game", tab="world"))
+
+
+@app.post("/gift/<npc_id>")
+def gift_npc(npc_id):
+    state = get_state()
+    if not state:
+        return redirect(url_for("game"))
+    n = npc.npcs.get(npc_id)
+    if n:
+        npc.remember(state["player"], npc_id, "gift", state["world_state"])
+        log(state, f"Đã tặng quà cho {n['name_vn']}.")
+    else:
+        log(state, "Không tìm thấy NPC để tặng quà.")
+    save_state(state)
+    return redirect(url_for("game", tab="relations"))
+
+
 @app.post("/race/<race_id>")
 def choose_race(race_id):
     state = get_state()
@@ -644,7 +698,7 @@ def promote():
     if world.promote_player(state["world_state"]):
         log(state, "Hoan thanh nhiem vu mon phai, cap bac tang len.")
     save_state(state)
-    return redirect(url_for("game", tab="sect"))
+    return redirect(url_for("game", tab="world"))
 
 
 @app.post("/quest/<quest_id>")
@@ -653,7 +707,7 @@ def complete_quest(quest_id):
     ok, message = world.complete_quest(state["player"], state["world_state"], quest_id)
     log(state, message)
     save_state(state)
-    return redirect(url_for("game", tab="sect"))
+    return redirect(url_for("game", tab="world"))
 
 
 @app.post("/secret/<realm_id>")
@@ -830,6 +884,8 @@ def combat_flee():
 def view_cultivate():
     state = get_state()
     player = state["player"]
+    current_year = current_time(state).year
+    world_events_count = len(state["world_state"].get("events_fired", []))
 
     # Get pressure status
     pressure_status = cult.get_pressure_status(player)
@@ -866,6 +922,11 @@ def view_cultivate():
                     <span class="pressure-value" style="color: {pressure_color};">{pressure}%</span>
                     <span class="pressure-level">{pressure_level}</span>
                 </div>
+            </div>
+            <div class="pressure-meta">
+                <span>Năm: {current_year}</span>
+                <span>Rủi ro trì hoãn: {breakthrough_risk}%</span>
+                <span>Sự kiện thế giới: {world_events_count}</span>
             </div>
             {f'<p class="pressure-warning" style="color: var(--blood-crystal);">⚠ Rủi ro trì hoãn: {breakthrough_risk}%</p>' if breakthrough_risk > 0 else ''}
         </div>
@@ -1036,6 +1097,15 @@ def view_cultivate():
                 display: flex;
                 align-items: center;
                 gap: var(--space-md);
+            }}
+
+            .pressure-meta {{
+                display: flex;
+                flex-wrap: wrap;
+                gap: var(--space-sm);
+                margin-top: var(--space-sm);
+                color: var(--spirit-silver);
+                font-size: 0.85rem;
             }}
 
             .pressure-bar {{
@@ -1345,17 +1415,194 @@ def view_techniques():
 
 def view_world():
     state = get_state()
+    player = state["player"]
+    joined_sect_id = state["world_state"].get("player_sect")
+
+    if joined_sect_id:
+        sect = world.sects[joined_sect_id]
+        rank = state["world_state"].get("player_rank", 0)
+        power = state["world_state"]["sect_power"].get(joined_sect_id, 50)
+        techniques = [tech.techniques[tid] for tid in world.get_sect_techniques(joined_sect_id, rank) if tid in tech.techniques]
+        technique_buttons = "".join(
+            f"<form method='post' action='{url_for('learn', technique_id=t['id'])}'><button class='btn btn-action'>{t['name_vn']}</button></form>"
+            for t in techniques
+        )
+
+        sect_npcs = [n for n in npc.get_npcs_in_sect(joined_sect_id) if n["sect_id"] == joined_sect_id or n["sect_id"] == "none"]
+        npc_cards = "".join(
+            f"<div class='npc-card'>"
+            f"<div class='npc-avatar'>👤</div>"
+            f"<div class='npc-card-body'>"
+            f"<div class='npc-card-title'><strong>{n['name_vn']}</strong> <span class='npc-role'>{n.get('role', 'Tu sĩ')}</span></div>"
+            f"<div class='npc-meta'>Tuổi { _npc_age(n) } · { _npc_gender(n) } · { _npc_realm_name(n) }</div>"
+            f"<p class='npc-desc'>{n['description']}</p>"
+            f"<div class='npc-actions'>"
+            f"<form method='post' action='{url_for('gift', npc_id=n['id'])}'><button class='btn btn-gift'>Tặng quà</button></form>"
+            f"</div></div></div>"
+            for n in sect_npcs
+        )
+
+        return f"""
+            <div class='section-panel'>
+                <div class='panel-ornament'>
+                    <span class='ornament-left'>❖</span>
+                    <span class='ornament-title'>Nội Môn - {sect['name_vn']}</span>
+                    <span class='ornament-right'>❖</span>
+                </div>
+                <div class='sect-summary'>
+                    <div>
+                        <p><strong>Cấp bậc:</strong> {rank}</p>
+                        <p><strong>Thế lực:</strong> {power}/100</p>
+                    </div>
+                    <form method='post' action='{url_for('leave_sect')}' class='leave-form'>
+                        <button class='btn btn-leave'>Rời tông môn</button>
+                    </form>
+                </div>
+                <div class='sect-inner-grid'>
+                    <div class='card sect-inner-card'>
+                        <h3>Công pháp tông môn</h3>
+                        <p class='muted'>Những công pháp hiện tại phù hợp cấp bậc nội môn của ngươi.</p>
+                        {technique_buttons or '<p class="muted">Chưa có công pháp nào mở cho cấp bậc này.</p>'}
+                    </div>
+                    <div class='card sect-inner-card'>
+                        <h3>Ngày thường trong tông môn</h3>
+                        <p class='muted'>Các đồng môn và tình huống trong đại môn.</p>
+                        <div class='npc-grid'>{npc_cards}</div>
+                    </div>
+                </div>
+                <div class='card sect-quest-card'>
+                    <h3>Nhiệm vụ môn phái</h3>
+                    <div class='grid'>{''.join(quest_card(state, q) for q in world.get_available_quests(state['world_state']))}</div>
+                </div>
+            </div>
+            <style>
+                .sect-summary {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: var(--space-lg);
+                    padding: var(--space-lg);
+                    background: rgba(20, 20, 30, 0.7);
+                    border: 1px solid rgba(79, 209, 165, 0.15);
+                    border-radius: 8px;
+                    margin-bottom: var(--space-xl);
+                }
+
+                .sect-inner-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: var(--space-lg);
+                    margin-bottom: var(--space-xl);
+                }
+
+                .sect-inner-card {
+                    padding: var(--space-lg);
+                    background: rgba(15, 15, 25, 0.95);
+                    border: 1px solid rgba(79, 209, 165, 0.12);
+                }
+
+                .npc-grid {
+                    display: grid;
+                    gap: var(--space-lg);
+                }
+
+                .npc-card {
+                    display: grid;
+                    grid-template-columns: 56px 1fr;
+                    gap: var(--space-md);
+                    padding: var(--space-lg);
+                    background: rgba(20, 20, 30, 0.7);
+                    border-radius: 8px;
+                    border: 1px solid rgba(79, 209, 165, 0.1);
+                }
+
+                .npc-avatar {
+                    display: grid;
+                    align-items: center;
+                    justify-items: center;
+                    font-size: 2rem;
+                    border-radius: 50%;
+                    background: rgba(79, 209, 165, 0.1);
+                    width: 56px;
+                    height: 56px;
+                }
+
+                .npc-card-body {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--space-sm);
+                }
+
+                .npc-card-title {
+                    display: flex;
+                    justify-content: space-between;
+                    gap: var(--space-sm);
+                    align-items: center;
+                    flex-wrap: wrap;
+                    color: var(--celestial-gold);
+                }
+
+                .npc-meta {
+                    color: var(--spirit-silver);
+                    font-size: 0.85rem;
+                }
+
+                .npc-desc {
+                    color: var(--moonlight-silver);
+                    margin: 0;
+                }
+
+                .npc-actions {
+                    margin-top: var(--space-sm);
+                }
+
+                .btn-gift, .btn-action, .btn-leave {
+                    border-color: var(--jade-essence);
+                    background: linear-gradient(135deg, rgba(15, 20, 25, 0.9) 0%, rgba(22, 26, 30, 0.9) 100%);
+                }
+
+                .btn-gift:hover, .btn-action:hover, .btn-leave:hover {
+                    box-shadow: 0 0 25px rgba(79, 209, 165, 0.25);
+                }
+
+                .sect-quest-card {
+                    padding: var(--space-lg);
+                    background: rgba(18, 18, 26, 0.95);
+                    border: 1px solid rgba(79, 209, 165, 0.12);
+                    border-radius: 8px;
+                }
+
+                .sect-quest-card .grid {
+                    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                }
+
+                .leave-form {
+                    margin: 0;
+                }
+            </style>
+        """
+
+    available_ids = {s["id"] for s in world.get_available_sects(player)}
     cards = []
     for sect in world.sects.values():
         element = sect.get("elements") or sect.get("element", "?")
         power = state['world_state']['sect_power'].get(sect['id'], 50)
-
-        # Determine power level indicator
         power_level = "Yếu" if power < 40 else "Trung bình" if power < 70 else "Mạnh" if power < 90 else "Vô địch"
         power_color = "var(--blood-crystal)" if power < 40 else "var(--celestial-gold)" if power < 90 else "var(--jade-essence)"
-
-        # Get faction icon
         faction_icon = "🏔" if "Chính" in sect.get('faction', '') else "🔥" if "Ma" in sect.get('faction', '') else "☯"
+        entry_realm = cult.realms.get(sect.get('min_realm', ''), {}).get('name_vn', sect.get('min_realm', 'Không rõ'))
+        entry_condition = sect.get('entry_condition', '').strip() or "Không có điều kiện đặc biệt."
+        sect_npcs = [n for n in npc.get_npcs_in_sect(sect['id']) if n['sect_id'] == sect['id']]
+        top_npcs = [n['name_vn'] for n in sect_npcs if n.get('role') == 'elder'][:3] or [n['name_vn'] for n in sect_npcs[:2]]
+        hover_npcs = ', '.join(top_npcs) or 'Chưa rõ'
+        technique_names = [tech.techniques[tid]['name_vn'] for tid in world.get_sect_techniques(sect['id'], 100) if tid in tech.techniques][:4]
+        tech_preview = ', '.join(technique_names) or 'Công pháp chưa lưu hành.'
+        can_join = sect['id'] in available_ids
+        action_html = (
+            f"<form method='post' action='{url_for('join', sect_id=sect['id'])}'><button class='btn btn-join'>Gia nhập môn phái</button></form>"
+            if can_join else
+            f"<button class='btn btn-disabled' disabled>Chưa đủ điều kiện</button>"
+        )
 
         cards.append(
             f"<div class='card sect-card'>"
@@ -1375,19 +1622,27 @@ def view_world():
             f"<span class='stat-value' style='color: {power_color};'>{power} ({power_level})</span>"
             f"</div></div>"
             f"<p class='sect-desc'>{sect['description']}</p>"
-            f"<form method='post' action='{url_for('join', sect_id=sect['id'])}'>"
-            f"<button class='btn btn-join'>Gia Nhập Môn Phái</button>"
-            f"</form></div>"
+            f"<div class='sect-detail'>"
+            f"<p><strong>Yêu cầu gia nhập:</strong> {entry_realm}</p>"
+            f"<p><em>{entry_condition}</em></p>"
+            f"<div class='sect-hover-panel'>"
+            f"<h4>Cao tầng</h4><p>{hover_npcs}</p>"
+            f"<h4>Công pháp</h4><p>{tech_preview}</p>"
+            f"</div>"
+            f"</div>"
+            f"{action_html}"
+            f"</div>"
         )
+
     return f"""
-        <div class="world-panel">
-            <div class="panel-ornament">
-                <span class="ornament-left">❖</span>
-                <span class="ornament-title">Tu Tiên Giới Vịnh</span>
-                <span class="ornament-right">❖</span>
+        <div class='world-panel'>
+            <div class='panel-ornament'>
+                <span class='ornament-left'>❖</span>
+                <span class='ornament-title'>Tông môn</span>
+                <span class='ornament-right'>❖</span>
             </div>
-            <p class="world-intro">Giới tu tiên rộng lớn, các môn phái tranh đấu không ngừng. Hãy chọn con đường tu hành của ngươi.</p>
-            <div class="world-grid">
+            <p class='world-intro'>Giới tu tiên rộng lớn, các tông môn tranh đấu không ngừng. Hãy chọn con đường tu hành của ngươi.</p>
+            <div class='world-grid'>
                 {''.join(cards)}
             </div>
         </div>
@@ -1503,10 +1758,55 @@ def view_world():
                 margin-bottom: var(--space-lg);
             }}
 
-            .btn-join {{
+            .sect-detail {{
+                padding: var(--space-md);
+                margin-bottom: var(--space-lg);
+                background: rgba(20, 20, 30, 0.65);
+                border-radius: 6px;
+            }}
+
+            .sect-detail h4 {{
+                margin: 0 0 var(--space-xs) 0;
+                color: var(--celestial-gold);
+            }}
+
+            .sect-detail p {{
+                margin: 0.2rem 0;
+                color: var(--moonlight-silver);
+                font-size: 0.9rem;
+            }}
+
+            .sect-hover-panel {{
+                margin-top: var(--space-sm);
+                padding: var(--space-sm);
+                border-radius: 6px;
+                background: rgba(15, 15, 20, 0.9);
+                opacity: 0.85;
+                transition: opacity 0.3s ease;
+            }}
+
+            .sect-card:hover .sect-hover-panel {{
+                opacity: 1;
+            }}
+
+            .sect-hover-panel h4 {{
+                margin-bottom: var(--space-xs);
+                color: var(--jade-essence);
+                font-size: 0.9rem;
+            }}
+
+            .btn-join, .btn-disabled {{
                 width: 100%;
                 border-color: var(--jade-essence);
                 background: linear-gradient(135deg, rgba(20, 30, 25, 0.9) 0%, rgba(25, 35, 30, 0.9) 100%);
+                padding: var(--space-md) var(--space-lg);
+                color: var(--moonlight-silver);
+                margin-top: var(--space-lg);
+            }}
+
+            .btn-disabled {{
+                opacity: 0.55;
+                cursor: not-allowed;
             }}
 
             .btn-join:hover {{
@@ -1796,6 +2096,40 @@ def view_inventory():
         """
 
 
+def _npc_gender(npc_data: dict) -> str:
+    explicit = npc_data.get("gender", "").strip()
+    if explicit:
+        return explicit
+    name = npc_data.get("name_vn", "").lower()
+    if "sư muội" in name or "sư tỷ" in name or "cô" in name or "bà" in name or "sa" in name:
+        return "Nữ"
+    if "sư huynh" in name or "sư đệ" in name or "trưởng lão" in name or "đạo nhân" in name or "tiên" in name:
+        return "Nam"
+    return "Không xác định"
+
+
+def _npc_age(npc_data: dict) -> str:
+    explicit = npc_data.get("age", "").strip()
+    if explicit:
+        return explicit
+    role = npc_data.get("role", "").lower()
+    if role == "elder":
+        return "70+"
+    if role == "disciple":
+        return "24"
+    if role == "merchant":
+        return "38"
+    if role == "rogue":
+        return "30"
+    return "?"
+
+
+def _npc_realm_name(npc_data: dict) -> str:
+    realm_id = npc_data.get("realm_id", "")
+    realm_data = cult.realms.get(realm_id, {})
+    return realm_data.get("name_vn", realm_id or "Chưa rõ")
+
+
 def view_relations():
     state = get_state()
     rels = state["world_state"].get("npc_relations", {})
@@ -1806,7 +2140,7 @@ def view_relations():
             rows.append(
                 f"<div class='npc-card'>"
                 f"<div class='npc-header'>"
-                f"<div class='npc-avatar'>👤</div>"
+                f"<div class='npc-avatar' title='Tuổi: {_npc_age(n)}\nGiới tính: {_npc_gender(n)}\nCảnh giới: {_npc_realm_name(n)}'>👤</div>"
                 f"<div class='npc-info'>"
                 f"<h3 class='npc-name'>{n['name_vn']}</h3>"
                 f"<span class='npc-role'>{n.get('role', 'Tu sĩ')}</span>"
@@ -1826,6 +2160,9 @@ def view_relations():
                 f"</div>"
                 f"</div>"
                 f"<p class='npc-greeting'>{npc.get_greeting(npc_id, relation)}</p>"
+                f"<div class='npc-actions'>"
+                f"<form method='post' action='{url_for('gift', npc_id=npc_id)}'><button class='btn btn-gift'>Tặng quà</button></form>"
+                f"</div>"
                 f"</div>"
             )
     return f"""
@@ -1843,6 +2180,67 @@ def view_relations():
             .relations-content {{
                 margin-top: var(--space-xl);
             }}
+            .npc-card {{
+                padding: var(--space-lg);
+                background: rgba(18, 18, 26, 0.95);
+                border: 1px solid rgba(79, 209, 165, 0.12);
+                border-radius: 10px;
+                margin-bottom: var(--space-lg);
+            }}
+            .npc-header {{
+                display: flex;
+                align-items: center;
+                gap: var(--space-md);
+                margin-bottom: var(--space-md);
+            }}
+            .npc-avatar {{
+                width: 56px;
+                height: 56px;
+                display: grid;
+                place-items: center;
+                border-radius: 50%;
+                background: rgba(79, 209, 165, 0.12);
+                font-size: 1.8rem;
+                cursor: help;
+            }}
+            .npc-info {{
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }}
+            .npc-name {{
+                margin: 0;
+                color: var(--celestial-gold);
+            }}
+            .npc-role {{
+                color: var(--spirit-silver);
+                font-size: 0.9rem;
+            }}
+            .npc-relations {{
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: var(--space-sm);
+                margin-bottom: var(--space-md);
+            }}
+            .relation-stat {{
+                padding: var(--space-sm);
+                background: rgba(20, 20, 30, 0.6);
+                border-radius: 6px;
+                text-align: center;
+            }}
+            .relation-label {{
+                display: block;
+                font-size: 0.75rem;
+                color: var(--spirit-silver);
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+            }}
+            .relation-value {{
+                display: block;
+                margin-top: 0.25rem;
+                font-size: 1.1rem;
+                font-weight: 600;
+            }}
             .npc-greeting {{
                 color: var(--moonlight-silver);
                 font-style: italic;
@@ -1850,6 +2248,18 @@ def view_relations():
                 padding: var(--space-sm);
                 background: rgba(20, 20, 30, 0.4);
                 border-left: 2px solid var(--jade-essence);
+                border-radius: 6px;
+            }}
+            .npc-actions {{
+                margin-top: var(--space-md);
+            }}
+            .btn-gift {{
+                border-color: var(--jade-essence);
+                background: linear-gradient(135deg, rgba(20, 30, 25, 0.9) 0%, rgba(25, 35, 30, 0.9) 100%);
+                padding: var(--space-md) var(--space-lg);
+            }}
+            .btn-gift:hover {{
+                box-shadow: 0 0 25px rgba(79, 209, 165, 0.25);
             }}
             .no-relations {{
                 text-align: center;

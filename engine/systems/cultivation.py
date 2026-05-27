@@ -31,6 +31,13 @@ class CultivationSystem:
         self.settings = settings or {}
         self.realms   = Loader.load_by_id(REALMS_PATH)
         self.roots    = Loader.load_by_id(ROOTS_PATH)
+        self.pressure_multipliers = self.settings.get("pressure_multipliers", {
+            1: 0.08, 2: 0.08, 3: 0.08,
+            4: 0.12, 5: 0.12, 6: 0.12,
+            7: 0.18, 8: 0.18, 9: 0.18,
+            10: 0.25, 11: 0.25, 12: 0.28,
+            13: 0.30, 14: 0.30, 15: 0.30,
+        })
 
         # Build backward compatibility mapping for old realm IDs
         self._build_legacy_mapping()
@@ -101,15 +108,44 @@ class CultivationSystem:
                 player.get("race_id", "human")))
         return exp
 
+    def _pressure_multiplier_for_realm(self, realm_id: str) -> float:
+        """Lấy hệ số áp lực theo cảnh giới hiện tại."""
+        realm_id = self.normalize_realm_id(realm_id)
+        realm = self.realms.get(realm_id)
+        if not realm:
+            return 0.12
+        level = int(realm.get("level", 0))
+        return self.pressure_multipliers.get(level, 0.30)
+
+    def apply_pressure_to_exp(self, player: dict, exp_gained: int) -> tuple[int, str | None]:
+        """Áp dụng áp lực vào hiệu quả tu luyện hiện tại."""
+        pressure = player.get("cultivation_pressure", 0)
+        message = None
+
+        if pressure >= 95:
+            if random.random() < 0.30:
+                adjusted = max(1, int(exp_gained * 0.5))
+                message = "Linh khí hỗn loạn, tu lực chỉ còn một nửa thu hoạch."
+            else:
+                adjusted = max(1, int(exp_gained * 0.85))
+                message = "Áp lực đột phá khiến công lực giảm nhẹ."
+        elif pressure >= 85:
+            if random.random() < 0.20:
+                adjusted = max(1, int(exp_gained * 0.6))
+                message = "Một phần tu lực bị tiêu hao do nội tâm không ổn."
+            else:
+                adjusted = max(1, int(exp_gained * 0.9))
+        else:
+            adjusted = exp_gained
+
+        return adjusted, message
+
     # ── Hệ thống áp lực tu luyện ───────────────────────────────────────────
     def add_cultivation_pressure(self, player: dict, exp_gained: int):
         """Thêm áp lực tu luyện khi tích lũy linh lực."""
         pressure = player.setdefault("cultivation_pressure", 0)
-        root = self.roots.get(player.get("root_id", "metal"))
-
-        # Áp lực tăng theo linh lực x linh căn bonus
-        pressure_mult = float(root.get("exp_multiplier", 1.0)) if root else 1.0
-        pressure += int(exp_gained * 0.1 * pressure_mult)
+        multiplier = self._pressure_multiplier_for_realm(player.get("realm_id", "mortal"))
+        pressure += int(exp_gained * multiplier)
         pressure = min(pressure, 100)
         player["cultivation_pressure"] = pressure
 
@@ -130,12 +166,20 @@ class CultivationSystem:
             player["breakthrough_ready"] = True
             return {
                 "event": "pressure_critical",
-                "message": "Linh lực đã đạt cực hạn, không thể tiếp tục trì hoãn đột phá!"
+                "message": "Nội tâm nóng như ngọn lửa thượng nguyên, đột phá đã trở thành cơn bão không thể trì hoãn!",
+                "flavor": "Làn khí hỗn loạn lan tỏa, bầu không khí xung quanh như rung chuyển dưới chân ngươi."
             }
-        elif pressure >= 80:
+        elif pressure >= 85:
             return {
-                "event": "pressure_warning",
-                "message": "Linh lực sung mãn, nội tâm có chút bất ổn..."
+                "event": "pressure_high",
+                "message": "Linh khí bất ổn, tu lực bắt đầu hao tổn không đều.",
+                "flavor": "Không khí quanh đỉnh đầu ngươi mỏng manh như vải, tiếng gió vang như thì thầm."
+            }
+        elif pressure >= 70:
+            return {
+                "event": "pressure_unstable",
+                "message": "Nội tâm không còn thuần nhất, tu lực trở nên bất ổn và khó điều hòa.",
+                "flavor": "Những âm thanh nhỏ và luồng khí lạ vờn quanh trống ngực ngươi."
             }
         return {"event": None, "message": None}
 
@@ -255,6 +299,7 @@ class CultivationSystem:
                 "message": f"Chờ thêm. Áp lực +5, Rủi ro +10 (hiện tại {danger_risk}%).",
                 "pressure": player.get("cultivation_pressure", 0),
                 "risk": danger_risk,
+                "advance_months": 1,
                 "failure_skip_months": 0
             }
 

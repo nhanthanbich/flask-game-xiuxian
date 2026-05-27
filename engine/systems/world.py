@@ -31,6 +31,8 @@ class WorldSystem:
             "events_fired": [],
             "npc_relations": {},
             "npc_memories": {},
+            "npc_events_fired": [],
+            "world_history": [],
             "combat_wins": 0,
             "sect_contrib": 0,
             "sim_year": 0,
@@ -40,9 +42,19 @@ class WorldSystem:
         state = self.default_state()
         if world_state:
             saved_power = world_state.get("sect_power", {})
+            saved_events = world_state.get("events_fired", [])
+            saved_npc = world_state.get("npc_relations", {})
+            saved_memories = world_state.get("npc_memories", {})
+            saved_npc_events = world_state.get("npc_events_fired", [])
+            saved_history = world_state.get("world_history", [])
             state.update(world_state)
             state["sect_power"] = self.default_state()["sect_power"]
             state["sect_power"].update(saved_power)
+            state["events_fired"] = list(saved_events)
+            state["npc_relations"] = dict(saved_npc)
+            state["npc_memories"] = dict(saved_memories)
+            state["npc_events_fired"] = list(saved_npc_events)
+            state["world_history"] = list(saved_history)
         return state
 
     def on_time_tick(self, data: dict):
