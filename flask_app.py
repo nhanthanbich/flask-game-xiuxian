@@ -308,7 +308,12 @@ def tick_time(state, time):
     data = {"time": time, "world_state": state["world_state"], "logs": []}
     event_bus.publish("time_tick", data)
     for line in data.get("logs", []):
-        log(state, "Su kien: " + line)
+        log(state, "Sự kiện: " + line)
+
+    # Process NPC timelines
+    npc_events = npc.process_npc_timelines(time.year, state)
+    for event in npc_events:
+        log(state, "— Tin tức từ giang hồ — " + event)
 
 
 def render_page(tab, body):
@@ -459,10 +464,26 @@ def cultivate(months):
     time = current_time(state)
     gain = cult.calc_player_exp(months, player, races)
     player["exp"] += gain
+
+    # Add cultivation pressure
+    pressure_result = cult.add_cultivation_pressure(player, gain)
+    if pressure_result.get("event") == "táu_hoả_nhập_ma":
+        log(state, "CẢNH BÁO: " + pressure_result["message"])
+        # Apply HP loss
+        hp_loss = pressure_result["hp_loss_percent"]
+        time.advance_months(months)
+        tick_time(state, time)
+        set_time(state, time)
+        save_state(state)
+        return redirect(url_for("game", tab="cultivate"))
+    elif pressure_result.get("message"):
+        log(state, pressure_result["message"])
+    else:
+        log(state, f"Bế quan {months} tháng, nhận {gain} exp.")
+
     time.advance_months(months)
     tick_time(state, time)
     set_time(state, time)
-    log(state, f"Be quan {months} thang, nhan {gain} exp.")
     save_state(state)
     return redirect(url_for("game", tab="cultivate"))
 
@@ -472,11 +493,39 @@ def breakthrough():
     state = get_state()
     player = state["player"]
     time = current_time(state)
-    result = cult.attempt_breakthrough(player)
+
+    # Check pressure requirement
+    pressure = player.get("cultivation_pressure", 0)
+    if pressure < 80:
+        log(state, "Linh lực chưa đủ, cần tu luyện thêm.")
+        save_state(state)
+        return redirect(url_for("game", tab="cultivate"))
+
+    result = cult.attempt_breakthrough(player, mode="normal")
     if result.get("success"):
         realm = result["realm"]
         event_bus.publish("breakthrough", {"player": player, "realm": realm, "world_state": state["world_state"]})
-        log(state, f"Đột phá thành công lên {realm['name_vn']}.")
+        log(state, f"Đột phá thành công lên {realm['name_vn']}!")
+        if result.get("lore"):
+            log(state, result["lore"])
+
+        # World reaction
+        log(state, "— Thiên hạ rúng động —")
+        log(state, f"Năm {time.year}, {player['name']} đạt {realm['name_vn']} tại nơi tu hành.")
+
+        # Add to world history
+        if "world_history" not in state["world_state"]:
+            state["world_state"]["world_history"] = []
+        state["world_state"]["world_history"].append({
+            "year": time.year,
+            "event": f"{player['name']} đột phá {realm['name_vn']}"
+        })
+
+        # NPC reactions
+        npc_knowledge = npc.process_npc_timelines(time.year, state)
+        for event in npc_knowledge:
+            log(state, event)
+
         text = flavor.get("breakthrough", realm["id"])
         if text:
             log(state, text)
@@ -486,7 +535,72 @@ def breakthrough():
             time.advance_months(skip)
             tick_time(state, time)
             set_time(state, time)
-        log(state, result.get("message", "Đột phá thất bại."))
+        if result.get("hp_loss_percent"):
+            log(state, f"{result['message']} Mất {result['hp_loss_percent']}% sinh lực.")
+        else:
+            log(state, result.get("message", "Đột phá thất bại."))
+    save_state(state)
+    return redirect(url_for("game", tab="cultivate"))
+
+
+@app.post("/breakthrough_seclusion")
+def breakthrough_seclusion():
+    """Bế quan đột phá - tỷ lệ thành công cao hơn."""
+    state = get_state()
+    player = state["player"]
+    time = current_time(state)
+
+    pressure = player.get("cultivation_pressure", 0)
+    if pressure < 80:
+        log(state, "Linh lực chưa đủ để bế quan đột phá.")
+        save_state(state)
+        return redirect(url_for("game", tab="cultivate"))
+
+    result = cult.attempt_breakthrough(player, mode="seclusion")
+    if result.get("success"):
+        realm = result["realm"]
+        seclusion_time = result.get("seclusion_time", random.randint(1, 3))
+
+        time.advance_months(seclusion_time)
+        tick_time(state, time)
+        set_time(state, time)
+
+        event_bus.publish("breakthrough", {"player": player, "realm": realm, "world_state": state["world_state"]})
+        log(state, f"Sau {seclusion_time} tháng bế quan, đột phá thành công lên {realm['name_vn']}!")
+        if result.get("lore"):
+            log(state, result["lore"])
+
+        text = flavor.get("breakthrough", realm["id"])
+        if text:
+            log(state, text)
+    else:
+        skip = result.get("failure_skip_months", 0)
+        if skip:
+            time.advance_months(skip)
+        tick_time(state, time)
+        set_time(state, time)
+        if result.get("hp_loss_percent"):
+            log(state, f"Bế quan {seclusion_time} tháng nhưng {result['message']}")
+        else:
+            log(state, result.get("message", "Bế quan đột phá thất bại."))
+    save_state(state)
+    return redirect(url_for("game", tab="cultivate"))
+
+
+@app.post("/breakthrough_wait")
+def breakthrough_wait():
+    """Trì hoãn đột phá - tăng áp lực và rủi ro."""
+    state = get_state()
+    player = state["player"]
+
+    result = cult.attempt_breakthrough(player, mode="wait")
+    danger_risk = result.get("risk", 0)
+
+    if danger_risk > 70:
+        log(state, f"CẢNH BÁO ĐỎ: Rủi ro trì hoãn đã đạt {danger_risk}%! Nên đột phá ngay.")
+    else:
+        log(state, f"Trì hoãn đột phá. {result['message']}")
+
     save_state(state)
     return redirect(url_for("game", tab="cultivate"))
 
@@ -716,6 +830,13 @@ def combat_flee():
 def view_cultivate():
     state = get_state()
     player = state["player"]
+
+    # Get pressure status
+    pressure_status = cult.get_pressure_status(player)
+    pressure = pressure_status["pressure"]
+    pressure_status_text = pressure_status["status"]
+    breakthrough_risk = pressure_status["breakthrough_risk"]
+
     info = cult.get_breakthrough_info(player)
     buttons = "".join(
         f'<div class="cultivate-option">'
@@ -729,11 +850,36 @@ def view_cultivate():
         f'</form></div>'
         for m in (1, 3, 6, 12)
     )
+
+    # Pressure display
+    pressure_color = "var(--jade-essence)" if pressure < 60 else "var(--celestial-gold)" if pressure < 80 else "var(--blood-crystal)"
+    pressure_level = "Ổn định" if pressure < 60 else "Cao" if pressure < 80 else "Nguy hiểm" if pressure < 95 else "Cực hạn"
+
+    pressure_section = f"""
+        <div class="pressure-section">
+            <h3>Áp Lực Tu Luyện</h3>
+            <div class="pressure-bar-container">
+                <div class="pressure-bar">
+                    <div class="pressure-fill" style="width: {pressure}%; background: {pressure_color};"></div>
+                </div>
+                <div class="pressure-info">
+                    <span class="pressure-value" style="color: {pressure_color};">{pressure}%</span>
+                    <span class="pressure-level">{pressure_level}</span>
+                </div>
+            </div>
+            {f'<p class="pressure-warning" style="color: var(--blood-crystal);">⚠ Rủi ro trì hoãn: {breakthrough_risk}%</p>' if breakthrough_risk > 0 else ''}
+        </div>
+    """
+
     breakthrough_button = ""
     if info.get("ready") and info.get("next"):
         nxt = info["next"]
         risk_percent = int(info["risk"] * 100)
         risk_color = "var(--jade-essence)" if risk_percent < 30 else "var(--celestial-gold)" if risk_percent < 60 else "var(--blood-crystal)"
+
+        can_breakthrough = pressure >= 80
+        button_disabled = "" if can_breakthrough else "disabled"
+
         breakthrough_button = (
             f'<div class="breakthrough-section">'
             f'<div class="breakthrough-header">'
@@ -743,12 +889,21 @@ def view_cultivate():
             f'<div class="breakthrough-info">'
             f'<p class="breakthrough-target">Thăng cấp: <strong>{nxt["name_vn"]}</strong></p>'
             f'<div class="risk-display">'
-            f'<span class="risk-label">Rủi ro</span>'
+            f'<span class="risk-label">Rủi ro cơ bản</span>'
             f'<span class="risk-value" style="color: {risk_color};">{risk_percent}%</span>'
             f'</div></div>'
+            f'{f"<p class=\"pressure-requirement\">Cần áp lực ≥ 80% (hiện tại {pressure}%)</p>" if not can_breakthrough else ""}'
+            f'<div class="breakthrough-options">'
             f'<form method="post" action="{url_for("breakthrough")}">'
-            f'<button class="btn btn-breakthrough">Thực Hiện Đột Phá</button>'
-            f'</form></div>'
+            f'<button class="btn btn-breakthrough" {button_disabled}>Đột Phá Ngay (60% cơ bản)</button>'
+            f'</form>'
+            f'<form method="post" action="{url_for("breakthrough_seclusion")}">'
+            f'<button class="btn btn-seclusion" {button_disabled}>Bế Quan Đột Phá (85%, tốn thời gian)</button>'
+            f'</form>'
+            f'<form method="post" action="{url_for("breakthrough_wait")}">'
+            f'<button class="btn btn-wait">Chờ Thêm (+5% áp lực, +10% rủi ro)</button>'
+            f'</form>'
+            f'</div></div>'
         )
     else:
         breakthrough_button = (
@@ -785,6 +940,8 @@ def view_cultivate():
                     </div>
                 </div>
             </div>
+
+            {pressure_section}
 
             <div class="cultivation-options">
                 <h3>Chọn Thời Gian Bế Quan</h3>
@@ -859,6 +1016,72 @@ def view_cultivate():
                 color: var(--moonlight-silver);
                 font-size: 0.9em;
                 line-height: 1.6;
+            }}
+
+            .pressure-section {{
+                margin: var(--space-xl) 0;
+                padding: var(--space-lg);
+                background: rgba(20, 20, 30, 0.4);
+                border-radius: 6px;
+            }}
+
+            .pressure-section h3 {{
+                color: var(--jade-essence);
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                margin-bottom: var(--space-md);
+            }}
+
+            .pressure-bar-container {{
+                display: flex;
+                align-items: center;
+                gap: var(--space-md);
+            }}
+
+            .pressure-bar {{
+                flex: 1;
+                height: 20px;
+                background: rgba(15, 15, 20, 0.9);
+                border: 1px solid rgba(79, 209, 165, 0.3);
+                border-radius: 10px;
+                overflow: hidden;
+            }}
+
+            .pressure-fill {{
+                height: 100%;
+                transition: width 0.5s ease;
+                box-shadow: 0 0 10px currentColor;
+            }}
+
+            .pressure-info {{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: var(--space-xs);
+            }}
+
+            .pressure-value {{
+                font-size: 1.5em;
+                font-weight: 700;
+                font-family: var(--font-spirit);
+            }}
+
+            .pressure-level {{
+                font-size: 0.75em;
+                color: var(--spirit-silver);
+                text-transform: uppercase;
+            }}
+
+            .pressure-warning {{
+                margin-top: var(--space-md);
+                text-align: center;
+                font-weight: 600;
+                animation: warningPulse 1s ease-in-out infinite;
+            }}
+
+            @keyframes warningPulse {{
+                0%, 100% {{ opacity: 0.7; }}
+                50% {{ opacity: 1; }}
             }}
 
             .cultivation-options {{
@@ -979,6 +1202,12 @@ def view_cultivate():
                 color: var(--celestial-gold);
             }}
 
+            .pressure-requirement {{
+                color: var(--celestial-gold);
+                font-size: 0.9em;
+                margin-bottom: var(--space-md);
+            }}
+
             .risk-display {{
                 display: inline-flex;
                 flex-direction: column;
@@ -987,6 +1216,7 @@ def view_cultivate():
                 padding: var(--space-sm) var(--space-md);
                 background: rgba(20, 20, 30, 0.8);
                 border-radius: 4px;
+                margin-bottom: var(--space-md);
             }}
 
             .risk-label {{
@@ -1001,16 +1231,50 @@ def view_cultivate():
                 font-weight: 700;
             }}
 
-            .btn-breakthrough {{
-                width: 100%;
-                border-color: var(--blood-crystal);
-                background: linear-gradient(135deg, rgba(60, 20, 20, 0.9) 0%, rgba(50, 15, 15, 0.9) 100%);
-                font-size: 1.1em;
+            .breakthrough-options {{
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-md);
             }}
 
-            .btn-breakthrough:hover {{
+            .btn-breakthrough, .btn-seclusion, .btn-wait {{
+                width: 100%;
+            }}
+
+            .btn-breakthrough {{
+                border-color: var(--blood-crystal);
+                background: linear-gradient(135deg, rgba(60, 20, 20, 0.9) 0%, rgba(50, 15, 15, 0.9) 100%);
+                font-size: 1.05em;
+            }}
+
+            .btn-breakthrough:hover:not(:disabled) {{
                 background: linear-gradient(135deg, rgba(80, 25, 25, 0.95) 0%, rgba(70, 20, 20, 0.95) 100%);
                 box-shadow: 0 0 30px rgba(220, 38, 38, 0.5);
+            }}
+
+            .btn-seclusion {{
+                border-color: var(--celestial-gold);
+                background: linear-gradient(135deg, rgba(40, 30, 20, 0.9) 0%, rgba(50, 35, 20, 0.9) 100%);
+            }}
+
+            .btn-seclusion:hover:not(:disabled) {{
+                background: linear-gradient(135deg, rgba(50, 35, 20, 0.95) 0%, rgba(60, 40, 25, 0.95) 100%);
+                box-shadow: 0 0 25px rgba(255, 200, 71, 0.4);
+            }}
+
+            .btn-wait {{
+                border-color: var(--spirit-silver);
+                background: linear-gradient(135deg, rgba(25, 25, 35, 0.9) 0%, rgba(30, 30, 40, 0.9) 100%);
+            }}
+
+            .btn-wait:hover {{
+                border-color: var(--jade-essence);
+                box-shadow: 0 0 20px rgba(79, 209, 165, 0.3);
+            }}
+
+            .btn-breakthrough:disabled, .btn-seclusion:disabled {{
+                opacity: 0.4;
+                cursor: not-allowed;
             }}
         </style>
         """

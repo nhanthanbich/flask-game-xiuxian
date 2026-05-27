@@ -101,6 +101,81 @@ class CultivationSystem:
                 player.get("race_id", "human")))
         return exp
 
+    # ── Hệ thống áp lực tu luyện ───────────────────────────────────────────
+    def add_cultivation_pressure(self, player: dict, exp_gained: int):
+        """Thêm áp lực tu luyện khi tích lũy linh lực."""
+        pressure = player.setdefault("cultivation_pressure", 0)
+        root = self.roots.get(player.get("root_id", "metal"))
+
+        # Áp lực tăng theo linh lực x linh căn bonus
+        pressure_mult = float(root.get("exp_multiplier", 1.0)) if root else 1.0
+        pressure += int(exp_gained * 0.1 * pressure_mult)
+        pressure = min(pressure, 100)
+        player["cultivation_pressure"] = pressure
+
+        # Kiểm tra ngưỡng
+        return self._check_pressure_threshold(player, pressure)
+
+    def _check_pressure_threshold(self, player: dict, pressure: int) -> dict:
+        """Kiểm tra ngưỡng áp lực và trả về thông báo."""
+        if pressure >= 100:
+            # Tẩu hỏa nhập ma
+            player["cultivation_pressure"] = 60
+            return {
+                "event": "táu_hoả_nhập_ma",
+                "message": "Áp lực tu luyện quá lớn! Thiên địa linh khí phản phệ — ngươi bị tẩu hỏa nhập ma!",
+                "hp_loss_percent": random.randint(20, 40)
+            }
+        elif pressure >= 95:
+            player["breakthrough_ready"] = True
+            return {
+                "event": "pressure_critical",
+                "message": "Linh lực đã đạt cực hạn, không thể tiếp tục trì hoãn đột phá!"
+            }
+        elif pressure >= 80:
+            return {
+                "event": "pressure_warning",
+                "message": "Linh lực sung mãn, nội tâm có chút bất ổn..."
+            }
+        return {"event": None, "message": None}
+
+    def get_pressure_status(self, player: dict) -> dict:
+        """Lấy trạng thái áp lực hiện tại."""
+        pressure = player.get("cultivation_pressure", 0)
+        breakthrough_ready = player.get("breakthrough_ready", False)
+        breakthrough_risk = player.get("breakthrough_risk", 0)
+
+        status = "ổn_định"
+        if pressure >= 95:
+            status = "critical"
+        elif pressure >= 80:
+            status = "warning"
+        elif pressure >= 60:
+            status = "high"
+
+        return {
+            "pressure": pressure,
+            "status": status,
+            "breakthrough_ready": breakthrough_ready,
+            "breakthrough_risk": breakthrough_risk
+        }
+
+    def increase_breakthrough_risk(self, player: dict):
+        """Tăng rủi ro khi trì hoãn đột phá."""
+        risk = player.get("breakthrough_risk", 0)
+        risk = min(risk + 10, 100)
+        player["breakthrough_risk"] = risk
+
+        pressure = player.get("cultivation_pressure", 0)
+        pressure = min(pressure + 5, 100)
+        player["cultivation_pressure"] = pressure
+
+    def reset_pressure(self, player: dict):
+        """Reset áp lực sau khi đột phá thành công."""
+        player["cultivation_pressure"] = 0
+        player["breakthrough_ready"] = False
+        player["breakthrough_risk"] = 0
+
     # ── Cảnh giới tiếp theo ─────────────────────────────────────────────
     def next_realm(self, realm_id: str) -> dict | None:
         # Normalize realm_id for backward compatibility
@@ -133,33 +208,110 @@ class CultivationSystem:
             "failure_skip_months":  int(nxt.get("failure_skip_months", 0)),
         }
 
-    def attempt_breakthrough(self, player: dict) -> dict:
+    def attempt_breakthrough(self, player: dict, mode: str = "normal") -> dict:
         """
-        Thử đột phá. Trả về:
-          Thành công: {"success": True,  "realm": nxt}
+        Thử đột phá với 3 chế độ:
+          - "normal": Đột phá ngay (60% + pressure_bonus 20%)
+          - "seclusion": Bế quan đột phá (85%, mất 1-3 tháng)
+          - "wait": Chờ thêm (+5 pressure, +10 risk)
+
+        Trả về:
+          Thành công: {"success": True, "realm": nxt, "lore": str}
           Thất bại:  {"success": False, "failure_skip_months": N, "message": str}
         """
+        pressure = player.get("cultivation_pressure", 0)
+
+        # Kiểm tra điều kiện
+        if mode in ["normal", "seclusion"]:
+            if pressure < 80:
+                return {"success": False, "message": "Linh lực chưa đủ để đột phá.", "failure_skip_months": 0}
+
         info = self.get_breakthrough_info(player)
-        if not info["ready"] or info["next"] is None:
+        if not info["ready"] and info["next"] is None:
             return {"success": False, "message": "Chưa đủ điều kiện đột phá.", "failure_skip_months": 0}
 
-        nxt  = info["next"]
-        risk = float(self.settings.get("breakthrough_risk_mult", 1.0)) * info["risk"]
+        nxt = info["next"]
+        if nxt is None:
+            return {"success": False, "message": "Đã đạt cảnh giới tối cao.", "failure_skip_months": 0}
+
+        # Tính tỷ lệ thành công theo chế độ
+        if mode == "normal":
+            base_rate = 0.60
+            pressure_bonus = (pressure / 100) * 0.20
+            success_rate = base_rate + pressure_bonus
+            failure_damage = 30
+            failure_pressure = 50
+
+        elif mode == "seclusion":
+            success_rate = 0.85
+            failure_damage = 15
+            failure_pressure = 60
+
+        elif mode == "wait":
+            self.increase_breakthrough_risk(player)
+            danger_risk = player.get("breakthrough_risk", 0)
+            return {
+                "success": False,
+                "message": f"Chờ thêm. Áp lực +5, Rủi ro +10 (hiện tại {danger_risk}%).",
+                "pressure": player.get("cultivation_pressure", 0),
+                "risk": danger_risk,
+                "failure_skip_months": 0
+            }
+
+        else:
+            return {"success": False, "message": "Chế độ đột phá không hợp lệ.", "failure_skip_months": 0}
+
+        # Thử đột phá
         skip = info["failure_skip_months"]
 
-        if random.random() < risk:
+        if random.random() < success_rate:
+            # Thành công
+            player["realm_id"] = nxt["id"]
+            lore = self._get_breakthrough_lore(nxt["id"])
+            self.reset_pressure(player)
             return {
-                "success":              False,
-                "failure_skip_months":  skip,
+                "success": True,
+                "realm": nxt,
+                "lore": lore,
+                "seclusion_time": random.randint(1, 3) if mode == "seclusion" else 0
+            }
+        else:
+            # Thất bại
+            player["cultivation_pressure"] = failure_pressure
+            player["breakthrough_ready"] = False
+
+            return {
+                "success": False,
+                "failure_skip_months": skip,
+                "hp_loss_percent": failure_damage,
                 "message": (
-                    f"Đột phá thất bại! Thiên lôi giáng xuống — "
-                    f"mất {skip} tháng dưỡng thương." if skip
-                    else "Đột phá thất bại! Căn cơ chưa vững."
+                    f"Đột phá thất bại! Thiên lôi giáng xuống —"
+                    f" mất {skip} tháng dưỡng thương, tổn hại {failure_damage}% sinh lực."
+                    if skip
+                    else f"Đột phá thất bại! Căn cơ chưa vững, mất {failure_damage}% sinh lực."
                 ),
             }
 
-        player["realm_id"] = nxt["id"]
-        return {"success": True, "realm": nxt}
+    def _get_breakthrough_lore(self, realm_id: str) -> str:
+        """Lấy đoạn văn học đột phá cho từng cảnh giới."""
+        lore_texts = {
+            "qi_refining_1": "Linh khí lần đầu lưu thông trong kinh mạch, như suối nguồn chảy qua đất khô.",
+            "qi_refining_2": "Kinh mạch mở rộng, linh khí tuôn như thác đổ qua vực sâu.",
+            "qi_refining_3": "Thân thể đạt cực hạn Luyện Khí, một bước nữa là Trúc Cơ.",
+            "foundation_1": "Nền móng đạo cơ thành hình, như núi non vươn lên từ biển cả.",
+            "foundation_2": "Đạo cơ thêm vững, mỗi hơi thở đều kéo theo linh khí thiên địa.",
+            "foundation_3": "Kim đan manh nha trong đan điền, như sao mai le lói lúc bình minh.",
+            "core_formation_1": "Kim đan ngưng tụ, tinh cầu rực sáng trong đan điền.",
+            "core_formation_2": "Kim đan thêm chắc, thần thức mở rộng ra ngoài thân.",
+            "core_formation_3": "Kim đan đạt cực hạn, nguyên anh đang hình thành bên trong.",
+            "nascent_soul_1": "Nguyên anh xuất khiếu, thần hồn rời thân thể và nhìn xuống phàm giới.",
+            "nascent_soul_2": "Nguyên anh lớn mạnh, có thể tồn tại độc lập với thể xác.",
+            "nascent_soul_3": "Nguyên anh đạt đỉnh, một niệm có thể chạm đến mây trời.",
+            "deity_transform_1": "Thần ý hòa vào thiên địa, cảm nhận được vạn vật như phần cơ thể mình.",
+            "deity_transform_2": "Thần thức trải rộng trăm dặm, mỗi ý niệm đều mang theo ý thiên địa.",
+            "deity_transform_3": "Hóa Thần cực hạn, thân thể như đã trở thành một với thế giới.",
+        }
+        return lore_texts.get(realm_id, "Ánh sáng rực rỡ bao trùm thân thể — ngươi đã bước qua ranh giới.")
 
     def do_breakthrough(self, player: dict) -> dict:
         """Đột phá không rủi ro — dùng khi game đã confirm từ trước."""

@@ -2,6 +2,8 @@
 World and sect system.
 """
 
+import random
+
 from engine.core.loader import Loader
 from engine.systems.technique import TechniqueSystem
 
@@ -49,6 +51,12 @@ class WorldSystem:
     def tick(self, time, world_state: dict) -> list[str]:
         logs = []
         logs.extend(self._simulate_world(time, world_state))
+        logs.extend(self._process_yearly_events(time, world_state))
+        return logs
+
+    def _process_yearly_events(self, time, world_state: dict) -> list[str]:
+        """Xử lý các sự kiện theo năm."""
+        logs = []
         for event in self.events.values():
             if event["id"] in world_state["events_fired"]:
                 continue
@@ -182,14 +190,45 @@ class WorldSystem:
             return []
         world_state["sim_year"] = time.year
         logs = []
+
+        # Sect power simulation
         for sect_id, sect in self.sects.items():
-            drift = 1 if sect["faction"] == "human" else 2
+            base_drift = 1 if sect["faction"] == "human" else 2
             if sect["faction"] == "mo":
-                drift = -1
-            world_state["sect_power"][sect_id] = self._clamp_power(
-                world_state["sect_power"].get(sect_id, 50) + drift
-            )
+                base_drift = -1
+
+            # Random variance
+            random_factor = random.randint(-2, 2)
+            total_drift = base_drift + random_factor
+
+            old_power = world_state["sect_power"].get(sect_id, 50)
+            new_power = self._clamp_power(old_power + total_drift)
+            world_state["sect_power"][sect_id] = new_power
+
+            # Check thresholds and fire events
+            threshold_event = self._check_sect_threshold(sect_id, sect, old_power, new_power, world_state)
+            if threshold_event:
+                logs.append(threshold_event)
+
         if time.year > 1:
-            logs.append("Cac tong mon am tham dich chuyen the luc trong nam moi.")
-            logs.append("Mot so NPC dong mon da tich luy them cong trang va danh vong.")
+            logs.append("Các tông môn âm thầm dịch chuyển thế lực trong năm mới.")
+            logs.append("Một số NPC đồng môn đã tích lũy thêm công trạng và danh vọng.")
         return logs
+
+    def _check_sect_threshold(self, sect_id: str, sect: dict, old_power: int, new_power: int, world_state: dict) -> str | None:
+        """Kiểm tra ngưỡng thế lực tông môn."""
+        event_key = f"sect_threshold_{sect_id}_{new_power}"
+
+        # Đã đạt ngưỡng cực yếu - tông môn suy vong
+        if new_power < 20 and old_power >= 20:
+            return f"{sect['name_vn']} đang suy vong, không còn nhận đệ tử mới."
+
+        # Đạt ngưỡng cực mạnh - tông môn cường thịnh
+        elif new_power > 80 and old_power <= 80:
+            return f"{sect['name_vn']} đạt đỉnh thịnh, mở thêm nhiều nhiệm vụ hệ cao."
+
+        # Tông môn giải thể
+        elif new_power == 0:
+            return f"{sect['name_vn']} đã giải thể, các đệ tử tản mát."
+
+        return None
