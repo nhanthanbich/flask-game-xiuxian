@@ -40,6 +40,40 @@ event_bus.subscribe("combat_win", npc.on_combat_win)
 ROOTS_PATH = "data/entities/spiritual_roots.csv"
 ENEMIES_PATH = "data/entities/enemies.csv"
 
+
+def translate_entry_condition(conditions_str):
+    """Translate entry condition codes into readable Vietnamese text."""
+    if not conditions_str:
+        return "Không có điều kiện đặc biệt."
+
+    conditions = [c.strip() for c in conditions_str.split(',') if c.strip()]
+    translations = []
+
+    for cond in conditions:
+        if cond == "linh_can_match":
+            translations.append("Linh căn phù hợp nguyên tố môn phái")
+        elif cond == "quest_and_realm":
+            translations.append("Hoàn thành nhiệm vụ thử luyện")
+        elif cond == "always":
+            translations.append("Không có điều kiện đặc biệt")
+        elif "Tiêu diệt" in cond or "Thắng" in cond or "Đánh bại" in cond:
+            # Already Vietnamese
+            translations.append(cond)
+        elif "advance_months" in cond:
+            translations.append("Tĩnh tâm tu luyện không间断")
+        elif "quan hệ" in cond.lower() or "Đạt quan hệ" in cond:
+            translations.append(cond)
+        elif "Có ít nhất" in cond:
+            translations.append(cond)
+        elif "HP xuống dưới" in cond:
+            translations.append(cond)
+        else:
+            # Keep as-is if it's already Vietnamese or unknown
+            translations.append(cond)
+
+    return "; ".join(translations) if translations else "Không có điều kiện đặc biệt."
+
+
 def default_player(root_id="metal", race_id="human", name="Tan Tu"):
     return {
         "name": name,
@@ -69,11 +103,12 @@ def start_menu():
                 f"</div></div>"
             )
         else:
+            realm_name = cult.realms.get(slot['realm_id'], {}).get('name_vn', slot['realm_id'])
             save_rows.append(
                 f"<div class='slot-card' id='slot-{slot['slot']}'>"
                 f"<span class='slot-number'>{slot['slot']}</span>"
                 f"<div class='slot-header'><h3 class='slot-title'>{slot['name']}</h3>"
-                f"<p class='slot-status active'>{slot['realm_id']}</p></div>"
+                f"<p class='slot-status active'>{realm_name}</p></div>"
                 f"<p class='slot-meta'>{slot['game_time']} - Lưu lúc {slot['saved_at']}</p>"
                 f"<div class='slot-actions'>"
                 f"<form method='post' action='{url_for('load_save', slot=slot['slot'])}'>"
@@ -466,9 +501,10 @@ def view_save_menu():
                 f"</div>"
             )
         else:
+            realm_name = cult.realms.get(slot['realm_id'], {}).get('name_vn', slot['realm_id'])
             rows.append(
                 f"<div class='card'><h3>Slot {slot['slot']} - {slot['name']}</h3>"
-                f"<p>{slot['realm_id']} | {slot['game_time']} | Lưu lúc {slot['saved_at']}</p>"
+                f"<p>{realm_name} | {slot['game_time']} | Lưu lúc {slot['saved_at']}</p>"
                 f"<form method='post' action='{url_for('load_save', slot=slot['slot'])}'><button>Load</button></form>"
                 f"<form method='post' action='{url_for('save_slot', slot=slot['slot'])}'><button>Lưu vào slot</button></form>"
                 f"<form method='post' action='{url_for('delete_save', slot=slot['slot'])}'><button>Xóa</button></form>"
@@ -1674,8 +1710,8 @@ def view_world():
         power_level = "Yếu" if power < 40 else "Trung bình" if power < 70 else "Mạnh" if power < 90 else "Vô địch"
         power_color = "var(--blood-crystal)" if power < 40 else "var(--celestial-gold)" if power < 90 else "var(--jade-essence)"
         faction_icon = "🏔" if "Chính" in sect.get('faction', '') else "🔥" if "Ma" in sect.get('faction', '') else "☯"
-        entry_realm = cult.realms.get(sect.get('min_realm', ''), {}).get('name_vn', sect.get('min_realm', 'Không rõ'))
-        entry_condition = sect.get('entry_condition', '').strip() or "Không có điều kiện đặc biệt."
+        entry_realm = cult.realms.get(sect.get('min_realm', ''), {}).get('name_vn', cult.realms.get('mortal', {}).get('name_vn', 'Không rõ'))
+        entry_condition = translate_entry_condition(sect.get('entry_condition', ''))
         sect_npcs = [n for n in npc.get_npcs_in_sect(sect['id']) if n['sect_id'] == sect['id']]
         top_npcs = [n['name_vn'] for n in sect_npcs if n.get('role') == 'elder'][:3] or [n['name_vn'] for n in sect_npcs[:2]]
         hover_npcs = ', '.join(top_npcs) or 'Chưa rõ'
@@ -1923,14 +1959,21 @@ def quest_card(state, q):
     if q["type"] == "item":
         have = player.get("inventory", {}).get(q["target_id"], 0)
         need = int(q["required_qty"])
-        progress = f"Váº­t pháº©m: {have}/{need}"
+        target_name = items.items.get(q["target_id"], {}).get("name_vn", q["target_id"])
+        progress = f"Vật phẩm ({target_name}): {have}/{need}"
     else:
         have = ws.get("combat_wins", 0)
         need = int(q["required_qty"])
-        progress = f"Tráº­n tháº¯ng: {have}/{need}"
+        progress = f"Trận thắng: {have}/{need}"
+    reward_item_name = ""
+    if q.get("reward_item"):
+        reward_item_name = items.items.get(q["reward_item"], {}).get("name_vn", q["reward_item"])
+    reward_text = f"rank +{q['reward_rank']}, thế lực +{q['reward_power']}"
+    if reward_item_name:
+        reward_text += f", {reward_item_name}"
     return (
         f"<div class='card'><h3>{q['name_vn']}</h3>"
-        f"<p>{progress} | thưởng: rank +{q['reward_rank']}, thế lực +{q['reward_power']}</p>"
+        f"<p>{progress} | thưởng: {reward_text}</p>"
         f"<p class='muted'>{q['description']}</p>"
         f"<form method='post' action='{url_for('complete_quest', quest_id=q['id'])}'><button>Hoàn thành</button></form></div>"
     )
@@ -1995,8 +2038,9 @@ def view_combat():
         enemy_level = tech.get_realm_index(enemy["realm_id"])
         if enemy_level > player_level + 1:
             continue
+        enemy_realm_name = cult.realms.get(enemy['realm_id'], {}).get('name_vn', enemy['realm_id'])
         cards.append(
-            f"<div class='card'><h3>{enemy['name_vn']}</h3><p>{enemy['realm_id']} | {enemy['element']} | HP {enemy['hp']}</p>"
+            f"<div class='card'><h3>{enemy['name_vn']}</h3><p>{enemy_realm_name} | {enemy['element']} | HP {enemy['hp']}</p>"
             f"<p class='muted'>{enemy['description']}</p><form method='post' action='{url_for('fight', enemy_id=enemy['id'])}'><button>Chiến đấu</button></form></div>"
         )
     return f"<h2>Chiến đấu</h2><div class='grid'>{''.join(cards)}</div>"

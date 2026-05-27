@@ -3,12 +3,14 @@ World map and sect browser tab.
 """
 
 from ui.renderer import Renderer
+from engine.systems.cultivation import CultivationSystem
 
 
 class WorldTab:
     def __init__(self, world, npc):
         self.world = world
         self.npc = npc
+        self.cult = CultivationSystem()
 
     def run(self, player: dict, world_state: dict) -> bool:
         changed = False
@@ -71,7 +73,7 @@ class WorldTab:
         Renderer.clear()
         Renderer.title("Gia Nhập Môn Phái")
         options = [
-            f"{s['name_vn']:16} | {s['element']:4} | yêu cầu {s['min_realm']}"
+            f"{s['name_vn']:16} | {s['element']:4} | yêu cầu {self.cult.realm_display(s.get('min_realm', 'mortal')).split('(')[0].strip()}"
             for s in available
         ] + ["Hủy"]
         choice = Renderer.menu(options)
