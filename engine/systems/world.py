@@ -78,20 +78,20 @@ class WorldSystem:
     def complete_quest(self, player: dict, world_state: dict, quest_id: str) -> tuple[bool, str]:
         quest = self.sect_quests.get(quest_id)
         if not quest or quest["sect_id"] != world_state.get("player_sect"):
-            return False, "Khong co nhiem vu phu hop."
+            return False, "Không có nhiệm vụ phù hợp."
         qtype = quest["type"]
         required = int(quest["required_qty"])
         if qtype == "item":
             inv = player.setdefault("inventory", {})
             item_id = quest["target_id"]
             if inv.get(item_id, 0) < required:
-                return False, "Chua du vat pham nhiem vu."
+                return False, "Chưa đủ vật phẩm nhiệm vụ."
             inv[item_id] -= required
             if inv[item_id] <= 0:
                 del inv[item_id]
         elif qtype == "combat_win":
             if world_state.get("combat_wins", 0) < required:
-                return False, "Chua du so tran thang."
+                return False, "Chưa đủ số trận thắng."
             world_state["combat_wins"] -= required
         world_state["sect_contrib"] = world_state.get("sect_contrib", 0) + 1
         sect_id = world_state["player_sect"]
@@ -105,7 +105,7 @@ class WorldSystem:
         if reward_item:
             inv = player.setdefault("inventory", {})
             inv[reward_item] = inv.get(reward_item, 0) + 1
-        return True, f"Hoan thanh {quest['name_vn']}."
+        return True, f"Hoàn thành {quest['name_vn']}."
 
     def get_available_sects(self, player: dict) -> list[dict]:
         player_level = self.tech.get_realm_index(player["realm_id"])

@@ -476,7 +476,7 @@ def breakthrough():
     if result.get("success"):
         realm = result["realm"]
         event_bus.publish("breakthrough", {"player": player, "realm": realm, "world_state": state["world_state"]})
-        log(state, f"Dot pha thanh cong len {realm['name_vn']}.")
+        log(state, f"Đột phá thành công lên {realm['name_vn']}.")
         text = flavor.get("breakthrough", realm["id"])
         if text:
             log(state, text)
@@ -486,7 +486,7 @@ def breakthrough():
             time.advance_months(skip)
             tick_time(state, time)
             set_time(state, time)
-        log(state, result.get("message", "Dot pha that bai."))
+        log(state, result.get("message", "Đột phá thất bại."))
     save_state(state)
     return redirect(url_for("game", tab="cultivate"))
 
@@ -498,7 +498,7 @@ def learn(technique_id):
     slots = player["technique_slots"]
     slot = next((i for i, value in enumerate(slots) if not value), 0)
     tech.learn(player, technique_id, slot)
-    log(state, f"Hoc cong phap {tech.techniques[technique_id]['name_vn']} vao slot {slot + 1}.")
+    log(state, f"Học công pháp {tech.techniques[technique_id]['name_vn']} vào slot {slot + 1}.")
     save_state(state)
     return redirect(request.referrer or url_for("game", tab="techniques"))
 
@@ -508,9 +508,9 @@ def join(sect_id):
     state = get_state()
     if world.join_sect(state["player"], state["world_state"], sect_id):
         event_bus.publish("join_sect", {"player": state["player"], "sect_id": sect_id, "world_state": state["world_state"]})
-        log(state, f"Gia nhap {world.sects[sect_id]['name_vn']}.")
+        log(state, f"Gia nhập {world.sects[sect_id]['name_vn']}.")
     else:
-        log(state, "Khong the gia nhap mon phai nay.")
+        log(state, "Không thể gia nhập môn phái này.")
     save_state(state)
     return redirect(url_for("game", tab="world"))
 
@@ -1257,7 +1257,7 @@ def view_sect():
     state = get_state()
     sect_id = state["world_state"].get("player_sect")
     if not sect_id:
-        return "<h2>Noi mon</h2><p>Chua gia nhap mon phai.</p>"
+        return "<h2>Nội môn</h2><p>Chưa gia nhập môn phái.</p>"
     sect = world.sects[sect_id]
     ids = world.get_sect_techniques(sect_id, state["world_state"].get("player_rank", 0))
     buttons = "".join(

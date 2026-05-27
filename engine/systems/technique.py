@@ -77,12 +77,12 @@ class TechniqueSystem:
         lines = []
         for idx, tid in enumerate(player["technique_slots"], 1):
             if not tid:
-                lines.append(f"Slot {idx}: Trong")
+                lines.append(f"Slot {idx}: Trống")
                 continue
 
             tech = self.techniques.get(tid)
             if tech is None:
-                lines.append(f"Slot {idx}: {tid} (khong tim thay)")
+                lines.append(f"Slot {idx}: {tid} (không tìm thấy)")
                 continue
 
             lines.append(
@@ -100,7 +100,7 @@ class TechniqueSystem:
             tech = self.techniques[tid]
             suffix = ""
             if mp is not None and mp < int(tech["mp_cost"]):
-                suffix = " [thieu MP]"
+                suffix = " [thiếu MP]"
             lines.append(
                 f"{idx}. {tech['name_vn']} | {tech['element']} | "
                 f"MP:{tech['mp_cost']} | {tech['description'][:28]}{suffix}"

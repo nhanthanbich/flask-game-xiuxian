@@ -42,9 +42,9 @@ class ItemSystem:
 
     def use_item(self, player: dict, item_id: str) -> str:
         if item_id not in self.items:
-            return "Vat pham khong ton tai."
+            return "Vật phẩm không tồn tại."
         if not self.remove_from_inventory(player, item_id):
-            return "Khong co vat pham nay trong tui."
+            return "Không có vật phẩm này trong túi."
 
         item = self.items[item_id]
         value = int(item["effect_value"])
@@ -52,14 +52,14 @@ class ItemSystem:
 
         if effect == "heal_hp":
             player["hp_bonus"] = player.get("hp_bonus", 0) + value
-            return f"{item['name_vn']} boi bo than the, sinh luc tiem nang +{value}."
+            return f"{item['name_vn']} bồi bổ thân thể, sinh lực tiềm năng +{value}."
         if effect == "heal_mp":
             player["mp_bonus"] = player.get("mp_bonus", 0) + value
-            return f"{item['name_vn']} bo sung linh luc, linh luc tiem nang +{value}."
+            return f"{item['name_vn']} bổ sung linh lực, linh lực tiềm năng +{value}."
         if effect == "exp_boost":
             player["exp"] = player.get("exp", 0) + value
-            return f"{item['name_vn']} hoa thanh linh khi, nhan {value} exp."
+            return f"{item['name_vn']} hóa thành linh khí, nhận {value} exp."
         if effect == "stat_boost":
             player["stat_bonus"] = player.get("stat_bonus", 0) + value
-            return f"{item['name_vn']} tang can co chien dau +{value}."
-        return f"{item['name_vn']} khong co tac dung ro rang."
+            return f"{item['name_vn']} tăng cần cơ chiến đấu +{value}."
+        return f"{item['name_vn']} không có tác dụng rõ ràng."

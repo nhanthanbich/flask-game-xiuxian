@@ -196,23 +196,23 @@ class CombatSystem:
         if effect == "heal":
             healed = max(value, damage // 3)
             attacker["hp"] = min(attacker["hp_max"], attacker["hp"] + healed)
-            logs.append(f"Hoi phuc {healed} HP.")
+            logs.append(f"Hồi phục {healed} HP.")
         elif effect == "full_heal":
             healed = attacker["hp_max"] - attacker["hp"]
             attacker["hp"] = attacker["hp_max"]
-            logs.append(f"Hoi phuc toan bo HP (+{healed}).")
+            logs.append(f"Hồi phục toàn bộ HP (+{healed}).")
         elif effect == "guard":
             attacker["def_buff"] = max(attacker.get("def_buff", 0), value)
-            logs.append("Phong thu tang trong luot ke tiep.")
+            logs.append("Phòng thủ tăng trong lượt kế tiếp.")
         elif effect == "stun" and damage >= int(tech.get("power", 10)):
             target["stunned"] = True
-            logs.append("Doi thu bi choang.")
+            logs.append("Đối thủ bị choáng.")
         elif effect == "dot":
             target["dot"] = max(target.get("dot", 0), value)
-            logs.append("Hoa luc tiep tuc thieu dot doi thu.")
+            logs.append("Hỏa lực tiếp tục thiêu đốt đối thủ.")
         elif effect == "mp_burn":
             target["mp"] = max(0, target.get("mp", 0) - value)
-            logs.append(f"Linh luc doi thu bi rut {value} MP.")
+            logs.append(f"Linh lực đối thủ bị rút {value} MP.")
 
     def _apply_dot(self, target: dict) -> list[str]:
         if not target.get("dot"):

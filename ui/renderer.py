@@ -38,13 +38,13 @@ class Renderer:
         print()
         while True:
             try:
-                choice = input("  -> Chon: ").strip()
+                choice = input("  -> Chọn: ").strip()
                 idx = int(choice) - 1
                 if 0 <= idx < len(options):
                     return idx
-                print("  So khong hop le, thu lai.")
+                print("  Số không hợp lệ, thử lại.")
             except ValueError:
-                print("  Nhap so thoi nhe.")
+                print("  Nhập số thôi nhé.")
 
     @staticmethod
     def confirm(question: str) -> bool:
@@ -53,4 +53,4 @@ class Renderer:
 
     @staticmethod
     def pause():
-        input("\n  [Nhan Enter de tiep tuc...]")
+        input("\n  [Nhấn Enter để tiếp tục...]")

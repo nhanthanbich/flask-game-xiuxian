@@ -2,23 +2,18 @@ id,name_vn,type,element,mp_cost,power,effect,effect_value,element_bonus_mult,rea
 metal_slash,Kim Nguyên Kiếm,kểm,Kim,5,12,damage,0,1.2,qi_refining_1,Kiếm pháp cơ bản hệ Kim chém ra kiếm khí sắc bén
 metal_pierce,Kim Cương Xuyen,Kết,kim,8,18,damage,0,1.3,qi_refining_2,Kiếm pháp hệ Kim xuyên thấu lực đạo tập trung một điểm
 metal_wave,Kim Long Ba,kểm,Kim,15,35,damage,0,1.4,qi_refining_3,Kiếm pháp cao cấp hệ Kim hóa kiếm ý thành long ba
-
 fire_palm,Hỏa Phách Chưởng,pháp,Hỏa,6,10,damage,0,1.2,qi_refining_1,Chưởng pháp hệ Hỏa đánh ra ngọn lửa nóng cháy
 fire_fist,Hỏa Diệm Quyền,pháp,Hỏa,10,20,damage,0,1.3,qi_refining_2,Quyền pháp hệ Hỏa bao phủ song quyền trong hỏa diệm
 fire_wave,Phấn Thiên Hỏa,pháp,Hỏa,18,40,damage,0,1.5,qi_refining_3,Pháp thuật hệ Hỏa triệu hồi hỏa ba quét sạch kẻ địch
-
 water_needle,Thủy Nguyên Châm,pháp,Thủy,4,8,damage,0,1.1,qi_refining_1,Pháp thuật hệ Thủy bắn ra ngàn kim châm linh thủy
 water_shield,Thủy Lian Trận,pháp,Thủy,12,0,guard,15,1.2,qi_refining_2,Phòng ngự thuật hệ Thủy tạo khiên nước bảo vệ
 water_drake,Thủy Long Ngạ,pháp,Thủy,20,45,damage,0,1.4,qi_refining_3,Pháp thuật cao cấp hệ Thủy hóa thành thủy long công kích
-
 wood_heal,Mộc Nguyên Hồi Xuân,pháp,Mộc,8,0,heal,25,1.1,qi_refining_1,Công pháp trị liệu hệ Mộc hồi phục sinh cơ
 wood_bind,Mộc Trúc Chú,pháp,Mộc,10,15,damage,0,1.2,qi_refining_2,Pháp thuật hệ Mộc rễ cây trói buộc đối thủ
 wood_thorn,Mộc Gai Trận,pháp,Mộc,18,38,damage,0,1.3,qi_refining_3,Pháp thuật hệ Mộc triệu hồi gai mộc tấn công diện rộng
-
 earth_wall,Thổ Nguyên Bích,pháp,Thổ,6,0,guard,12,1.1,qi_refining_1,Phòng ngự thuật hệ Thổ tạo tường đất chắn sát thương
 earth_spike,Địa Gai Trận,pháp,Thổ,12,22,damage,0,1.3,qi_refining_2,Pháp thuật hệ Thổ triệu hồi gai đá từ lòng đất
 earth_quake,Địa Chấn,pháp,Thổ,22,48,damage,0,1.4,qi_refining_3,Pháp thuật cao cấp hệ Thổ gây động đất chấn thương
-
 sword_rain,Kiếm Vũ,kểm,None,15,30,multi_hit,3,1.1,foundation_1,Kiếm pháp vô hệ triệu hồi kiếm vũ công kích liên hồi
 thunder_strike,Lôi Đình Nhất Kích,pháp,Kim,20,45,stun,1,1.5,foundation_1,Pháp thuật hệ Kim triệu hồi lôi đình choáng đối thủ
 flame_armor,Hỏa Giáp,pháp,Hỏa,18,0,guard,25,1.3,foundation_1,Pháp thuật hệ Hỏa tạo giáp lửa bảo vệ và phản đòn
@@ -27,7 +22,6 @@ nature_bless,Tự Nhiên Chúc Phúc,pháp,Mộc,25,0,heal,60,1.2,foundation_2,C
 stone_form,Thạch Hóa Chi Thân,pháp,Thổ,20,0,guard,50,1.5,foundation_2,Phòng ngự cực mạnh hệ Thổ hóa thân thành đá
 storm_blade,Phong Lôi Kiếm,kểm,Kim,28,55,damage,0,1.6,foundation_2,Kiếm pháp kết hợp phong lôi công kích mạnh
 void_step,Hư Không Bước,pháp,None,12,0,speed_boost,30,1.1,foundation_2,Công pháp thân pháp di chuyển tức thời tăng tốc
-
 golden_light,Kim Quang Chiếu,kểm,Kim,35,70,damage,0,1.5,core_formation_1,Kiếm pháp cao cấp hệ Kim bắn ra kim quang xuyên không
 inferno,Nghiệt Diệm,pháp,Hỏa,40,85,damage,0,1.6,core_formation_1,Pháp thuật hỏa hệ tạo biển lửa thiêu đốt mọi thứ
 tsunami,Thương Hải,pháp,Thủy,38,80,damage,0,1.5,core_formation_1,Pháp thuật thủy hệ triệu hồi hải啸 quét sạch
@@ -35,12 +29,10 @@ life_stream,Sinh Mệnh Chi Tuyền,pháp,Mộc,30,0,full_heal,0,1.3,core_format
 earth_prison,Địa Ngục Trấn,pháp,Thổ,32,75,stun,2,1.4,core_formation_2,Pháp thuật thổ hệ giam cầm và choáng đối thủ
 sword_domain,Kiếm Vực,kểm,None,45,95,damage,0,1.7,core_formation_2,Tuyệt kỹ kiếm đạo tạo kiếm vực sát thương diện rộng
 mana_burn,Linh Lực Tiêu,pháp,None,35,50,mp_burn,40,1.2,core_formation_2,Pháp thuật rút MP đối thủ làm suy yếu
-
 nascent_blade,Nguyên Anh Kiếm,kểm,Kim,60,140,damage,0,1.8,nascent_soul_1,Tuyệt kỹ Nguyên Anh kiếm ý cắt không gian
 soul_fire,Vong Hồn Nghiệt,pháp,Hỏa,65,150,damage,0,1.9,nascent_soul_1,Pháp thuật hỏa cấp Nguyên Anh thiêu cháy linh hồn
 void_tide,Hư Không Triều,pháp,Thủy,58,135,damage,0,1.7,nascent_soul_1,Pháp thuật thủy hệ Nguyên Anh lan hư không
 world_tree,Thọ Giới Giáng Lâm,pháp,Mộc,70,0,full_heal,0,1.6,nascent_soul_2,Công pháp cực hạn Nguyên Anh triệu hồi thế giới chi thụ
-
 deity_strike,Thần Lôi Nhất Kích,pháp,Kim,100,250,damage,0,2.0,deity_transform_1,Thần thuật Nguyên Anh cao cấp triệu hồi thiên lôi
 chaos_flame,Hỗn Nguyên Hỏa,pháp,Hỏa,110,270,damage,0,2.1,deity_transform_1,Hỗn nguyên hỏa thiêu rụi mọi chướng ngại
 infinity_ocean,Vô Biên Hải,pháp,Thủy,95,240,damage,0,1.9,deity_transform_1,Thủy thuật cực hạn tạo hải dương vô tận

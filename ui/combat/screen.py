@@ -17,7 +17,7 @@ class CombatScreen:
         e_state = self.combat.spawn_enemy(enemy_id)
 
         Renderer.clear()
-        Renderer.title("Chien Dau Bat Dau")
+        Renderer.title("Chiến Đấu Bắt Đầu")
         Renderer.line(f"{player['name']} VS {e_state['name']}")
         Renderer.pause()
 
@@ -26,12 +26,12 @@ class CombatScreen:
             self._draw_status(player, p_state, e_state, turn)
             tid = self._pick_technique(player, p_state)
             if tid is None:
-                Renderer.line("Nguoi roi khoi tran chien.")
+                Renderer.line("Người rời khỏi trận chiến.")
                 Renderer.pause()
                 return {"result": "flee", "exp": 0, "time_cost": int(self.combat.settings["flee_time_cost"])}
             if tid == "__recover__":
                 self.combat._regen_mp(p_state)
-                Renderer.line("Nguoi dieu tuc mot luot de hoi phuc linh luc.")
+                Renderer.line("Người điều tức một lượt để hồi phục linh lực.")
             else:
                 self._print_logs(self.combat.player_turn(tid, p_state, e_state))
 
@@ -75,14 +75,14 @@ class CombatScreen:
                 )
                 tids.append(tid)
         if not options:
-            Renderer.line("Khong co ky nang nao trong slot.")
+            Renderer.line("Không có kỹ năng nào trong slot.")
             Renderer.pause()
             return None
         if not has_affordable:
-            Renderer.line("Tat ca ky nang deu thieu MP.")
+            Renderer.line("Tất cả kỹ năng đều thiếu MP.")
             Renderer.pause()
             return "__recover__"
-        options.append("Bo chay")
+        options.append("Bỏ chạy")
         choice = Renderer.menu(options)
         if choice == len(tids):
             return None
@@ -94,17 +94,17 @@ class CombatScreen:
         Renderer.line()
         drop = None
         if result == "win":
-            Renderer.line(f"Chien thang! Nhan {e_state['exp']} exp.")
+            Renderer.line(f"Chiến thắng! Nhận {e_state['exp']} exp.")
             if self.flavor:
                 Renderer.line(self.flavor.get("combat_win", player["realm_id"]))
             drop = self.combat.calc_drop(e_state)
             if drop and drop in self.tech.techniques:
                 tech = self.tech.techniques[drop]
-                Renderer.line(f"Nhan duoc cong phap roi: {tech.get('name_vn', drop)}.")
-                if Renderer.confirm("Hoc ngay?"):
+                Renderer.line(f"Nhận được công pháp rồi: {tech.get('name_vn', drop)}.")
+                if Renderer.confirm("Học ngay?"):
                     self._learn_drop(player, drop)
         else:
-            Renderer.line("That bai.")
+            Renderer.line("Thất bại.")
             if self.flavor:
                 Renderer.line(self.flavor.get("combat_lose", player["realm_id"]))
         Renderer.pause()
@@ -116,11 +116,11 @@ class CombatScreen:
         }
 
     def _learn_drop(self, player: dict, technique_id: str):
-        slot_options = self.tech.get_slot_display(player) + ["Huy"]
+        slot_options = self.tech.get_slot_display(player) + ["Hủy"]
         choice = Renderer.menu(slot_options)
         if choice < len(player["technique_slots"]):
             self.tech.learn(player, technique_id, choice)
-            Renderer.line("Da hoc cong phap moi.")
+            Renderer.line("Đã học công pháp mới.")
 
     @staticmethod
     def _print_logs(logs: list[str]):

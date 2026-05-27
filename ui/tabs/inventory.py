@@ -20,9 +20,9 @@ class InventoryTab:
         changed = False
         while True:
             Renderer.clear()
-            Renderer.title("Tui Do")
+            Renderer.title("Túi Đồ")
             self._draw_inventory(player)
-            options = ["Su dung vat pham", "Quay lai"]
+            options = ["Sử dụng vật phẩm", "Quay lại"]
             choice = Renderer.menu(options)
             if choice == 1:
                 return changed
@@ -30,7 +30,7 @@ class InventoryTab:
 
     def _draw_inventory(self, player: dict):
         if not player["inventory"]:
-            Renderer.line("Tui do dang trong.")
+            Renderer.line("Túi đồ đang trống.")
             Renderer.line()
             return
         for item_type, label in TYPE_NAMES.items():
@@ -50,18 +50,18 @@ class InventoryTab:
     def _use_item(self, player: dict) -> bool:
         usable = self.items.get_usable(player)
         if not usable:
-            Renderer.line("Khong co vat pham co the dung.")
+            Renderer.line("Không có vật phẩm có thể dùng.")
             Renderer.pause()
             return False
         options = [
             f"{item['name_vn']} | {item['effect_type']} +{item['effect_value']} | {item['description']}"
             for item in usable
-        ] + ["Huy"]
+        ] + ["Hủy"]
         choice = Renderer.menu(options)
         if choice == len(usable):
             return False
         item = usable[choice]
-        if not Renderer.confirm(f"Dung {item['name_vn']}?"):
+        if not Renderer.confirm(f"Dùng {item['name_vn']}?"):
             return False
         Renderer.line(self.items.use_item(player, item["id"]))
         Renderer.pause()

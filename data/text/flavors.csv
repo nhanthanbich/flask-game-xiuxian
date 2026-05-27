@@ -111,3 +111,59 @@ cult_immortal_1,cultivation,true_immortal,Đã vượt khỏi giới hạn phàm
 break_immortal_1,breakthrough,true_immortal,Chân Tiên đã thành — vĩnh hằng trong tầm tay.
 win_immortal_1,combat_win,true_immortal,Kẻ địch đã tan biến như chưa từng tồn tại.
 lose_immortal_1,combat_lose,true_immortal,Ngay cả Chân Tiên cũng có thể thất bại — nhưng không thể chết.
+quest_qi_1,quest_complete,qi_refining_1,Nhim vụ hoàn thành — đạo tâm bắt đầu vững vàng.
+quest_qi_2,quest_complete,qi_refining_2,Kinh nghiệm từ nhiệm vụ kết tinh thành tu lực.
+quest_qi_3,quest_complete,qi_refining_3,Luyện Khí đã biết cách tăng công trang.
+quest_found_1,quest_complete,foundation_1,Nhiệm vụ hoàn thành — Trúc Cơ nghe rõ từng nhịp.
+quest_found_2,quest_complete,foundation_2,Kinh nghiệm chiến đấu làm căn cơ thêm vững.
+quest_found_3,quest_complete,foundation_3,Kim Đan sẽ chào đón người đã chứng minh sự chuẩn bị.
+quest_core_1,quest_complete,core_formation_1,Nhím vụ cho thấy Kim Đan chưa hòa đủ.
+quest_core_2,quest_complete,core_formation_2,Tu sĩ Kim Đan đã hoàn thành phần của mình.
+quest_core_3,quest_complete,core_formation_3,Kim Đan rực sáng hơn khi cộng sức thành công.
+quest_soul_1,quest_complete,nascent_soul_1,Nguyên Anh từng khi hiểu được trách nhiệm.
+quest_soul_2,quest_complete,nascent_soul_2,Thần hồn thức tỉnh hơn khi học hỏi từ nhiệm vụ.
+quest_soul_3,quest_complete,nascent_soul_3,Người bắt đầu hiểu lý thứ mà Hóa Thần cần.
+quest_deity_1,quest_complete,deity_transform_1,Thần ý được bài học từ phục vụ tông môn.
+quest_deity_2,quest_complete,deity_transform_2,Thần thức mở rộng khi người đạt được mục tiêu.
+quest_deity_3,quest_complete,deity_transform_3,Người bắt đầu nắm được sức mạnh thần ý.
+quest_void_1,quest_complete,void_refinement_1,Không gian cho người thấy ý nghĩa trao đổi.
+quest_void_2,quest_complete,void_refinement_2,Luyện Hư học được tính kỷ luật từ nhiệm vụ.
+quest_void_3,quest_complete,void_refinement_3,Người thấy Hợp Thể không phải xa vời nữa.
+quest_body_1,quest_complete,body_integration_1,Thiên địa qua cơ thể trả lời lời nhờ vọng.
+quest_body_2,quest_complete,body_integration_2,Hợp nhất thêm chắc chắn khi hoàn thành nhiệm vụ.
+quest_body_3,quest_complete,body_integration_3,Độ Kiếp sẽ là bước tiếp của người dũng cảm.
+quest_trib_1,quest_complete,tribulation_1,Dù sâu trong kiếp nhưng người vẫn hoàn thành.
+quest_trib_2,quest_complete,tribulation_2,Nhiệm vụ giữa cơn bão thiên kiếp — chứng tỏ sức mạnh.
+quest_trib_3,quest_complete,tribulation_3,Người sống sót và hoàn thành — Đại Thừa chờ đợi.
+quest_asc_1,quest_complete,great_ascension_1,Đại Thừa hoàn thành nhiệm vụ nhân loại.
+quest_asc_2,quest_complete,great_ascension_2,Thế giới phàm không thể ràng buộc người nữa.
+quest_asc_3,quest_complete,great_ascension_3,Chân Tiên chỉ còn là bước tiếp cuối cùng.
+quest_immortal,quest_complete,true_immortal,Chân Tiên hoàn thành những gì chỉ Chân Tiên mới làm được.
+rank_up_qi_1,rank_up,qi_refining_1,Bước chân đầu tiên trong tông môn được công nhận.
+rank_up_qi_2,rank_up,qi_refining_2,Luyện Khí nhập môn vào hàng nội môn.
+rank_up_qi_3,rank_up,qi_refining_3,Người sắp bước vào tầng nền móng — tông môn ghi nhận.
+rank_up_found_1,rank_up,foundation_1,Trúc Cơ được tông môn chỉ dạy riêng.
+rank_up_found_2,rank_up,foundation_2,Căn cơ vững chắc — người trở thành truyền nhân.
+rank_up_found_3,rank_up,foundation_3,Kim Đan sắp tới — tông môn sẵn sàng hỗ trợ toàn lực.
+rank_up_core_1,rank_up,core_formation_1,Kim Đan tạo thành — người xứng đáng thăng tiến.
+rank_up_core_2,rank_up,core_formation_2,Quyền năng Kim Đan được tông môn công nhận cao.
+rank_up_core_3,rank_up,core_formation_3,Nguyên Anh gần kề — người là trụ cột tông môn.
+rank_up_soul_1,rank_up,nascent_soul_1,Nguyên Anh hiện hình — người là de tu chan truyền.
+rank_up_soul_2,rank_up,nascent_soul_2,Tầng cấp mới — người bắt đầu hướng dẫn thế hệ sau.
+rank_up_soul_3,rank_up,nascent_soul_3,Người sắp là truong lao — tuổi hạo khí bắt đầu.
+rank_up_deity_1,rank_up,deity_transform_1,Thần ý vươn tới — người trở thành cao nhân.
+rank_up_deity_2,rank_up,deity_transform_2,Cao thủ được công nhận toàn tông.
+rank_up_deity_3,rank_up,deity_transform_3,Hóa Thần gần kề — người là huyền thoại sống.
+rank_up_void_1,rank_up,void_refinement_1,Luyện Hư được tôn vinh — người vượt nhân tầng.
+rank_up_void_2,rank_up,void_refinement_2,Người không còn thuộc về thế giới phàm nữa.
+rank_up_void_3,rank_up,void_refinement_3,Hợp Thể chào đón người — bậc cao thủ tối cao.
+rank_up_body_1,rank_up,body_integration_1,Hợp nhất với thiên địa — người vượt qua phàm nhân.
+rank_up_body_2,rank_up,body_integration_2,Độ Kiếp chứng tỏ người đủ sức.
+rank_up_body_3,rank_up,body_integration_3,Độc mộc thanh vân — người là vĩ nhân huyền thoại.
+rank_up_trib_1,rank_up,tribulation_1,Sống qua thiên kiếp — người xứng đáng được tôn sùng.
+rank_up_trib_2,rank_up,tribulation_2,Đại Thừa đón nhận người — bậc tối cao.
+rank_up_trib_3,rank_up,tribulation_3,Người sắp trở thành huyền thoại của thế giới.
+rank_up_asc_1,rank_up,great_ascension_1,Đại Thừa là đỉnh của tông môn.
+rank_up_asc_2,rank_up,great_ascension_2,Tôn sư cũ chỉ còn là bộp kính.
+rank_up_asc_3,rank_up,great_ascension_3,Chân Tiên — bậc cao nhất tôn phái.
+rank_up_immortal,rank_up,true_immortal,Chân Tiên vĩnh hằng — người là thần thánh.

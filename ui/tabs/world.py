@@ -14,21 +14,21 @@ class WorldTab:
         changed = False
         while True:
             Renderer.clear()
-            Renderer.title("The Gioi")
+            Renderer.title("Thế Giới")
             current = world_state.get("player_sect")
             if current:
                 sect = self.world.sects[current]
-                Renderer.line(f"Mon phai hien tai: {sect['name_vn']} (cap {world_state.get('player_rank', 0)})")
+                Renderer.line(f"Môn phái hiện tại: {sect['name_vn']} (cấp {world_state.get('player_rank', 0)})")
             else:
-                Renderer.line("Mon phai hien tai: chua gia nhap")
+                Renderer.line("Môn phái hiện tại: chưa gia nhập")
             Renderer.line()
 
             options = [
-                "Xem danh sach mon phai",
-                "Gia nhap mon phai",
-                "Roi mon phai",
-                "Su kien lich su",
-                "Quay lai",
+                "Xem danh sách môn phái",
+                "Gia nhập môn phái",
+                "Rời môn phái",
+                "Sự kiện lịch sử",
+                "Quay lại",
             ]
             choice = Renderer.menu(options)
 
@@ -45,77 +45,77 @@ class WorldTab:
 
     def _show_sects(self, world_state: dict):
         Renderer.clear()
-        Renderer.title("Ban Do Mon Phai")
+        Renderer.title("Bản Đồ Môn Phái")
         for sect in self.world.sects.values():
             power = world_state["sect_power"].get(sect["id"], 50)
             npc_count = len([n for n in self.npc.npcs.values() if n["sect_id"] == sect["id"]])
             Renderer.line(
                 f"{sect['name_vn']:16} | {sect['element']:4} | {sect['faction']:5} | "
-                f"The luc {power:3}/100 | NPC {npc_count} | {sect['location']}"
+                f"Thể lực {power:3}/100 | NPC {npc_count} | {sect['location']}"
             )
             Renderer.line(f"  {sect['description']}")
         Renderer.pause()
 
     def _join(self, player: dict, world_state: dict) -> bool:
         if world_state.get("player_sect"):
-            Renderer.line("Nguoi da co mon phai.")
+            Renderer.line("Người đã có môn phái.")
             Renderer.pause()
             return False
 
         available = self.world.get_available_sects(player)
         if not available:
-            Renderer.line("Chua co mon phai phu hop canh gioi.")
+            Renderer.line("Chưa có môn phái phù hợp cảnh giới.")
             Renderer.pause()
             return False
 
         Renderer.clear()
-        Renderer.title("Gia Nhap Mon Phai")
+        Renderer.title("Gia Nhập Môn Phái")
         options = [
-            f"{s['name_vn']:16} | {s['element']:4} | yeu cau {s['min_realm']}"
+            f"{s['name_vn']:16} | {s['element']:4} | yêu cầu {s['min_realm']}"
             for s in available
-        ] + ["Huy"]
+        ] + ["Hủy"]
         choice = Renderer.menu(options)
         if choice == len(available):
             return False
 
         sect = available[choice]
-        if not Renderer.confirm(f"Gia nhap {sect['name_vn']}?"):
+        if not Renderer.confirm(f"Gia nhập {sect['name_vn']}?"):
             return False
 
         if not self.world.join_sect(player, world_state, sect["id"]):
-            Renderer.line("Khong the gia nhap mon phai nay.")
+            Renderer.line("Không thể gia nhập môn phái này.")
             Renderer.pause()
             return False
 
         for npc in self.npc.get_npcs_in_sect(sect["id"]):
             self.npc.remember(player, npc["id"], "join_sect", world_state)
-        Renderer.line(f"Da gia nhap {sect['name_vn']}.")
+        Renderer.line(f"Đã gia nhập {sect['name_vn']}.")
         Renderer.pause()
         return True
 
     def _leave(self, player: dict, world_state: dict) -> bool:
         sect_id = world_state.get("player_sect")
         if not sect_id:
-            Renderer.line("Nguoi chua co mon phai.")
+            Renderer.line("Người chưa có môn phái.")
             Renderer.pause()
             return False
         sect = self.world.sects[sect_id]
-        if not Renderer.confirm(f"Roi {sect['name_vn']}?"):
+        if not Renderer.confirm(f"Rời {sect['name_vn']}?"):
             return False
         self.world.leave_sect(player, world_state)
-        Renderer.line("Da roi mon phai.")
+        Renderer.line("Đã rời môn phái.")
         Renderer.pause()
         return True
 
     def _show_events(self, world_state: dict):
         Renderer.clear()
-        Renderer.title("Su Kien Lich Su")
+        Renderer.title("Sự Kiện Lịch Sử")
         fired = world_state.get("events_fired", [])
         if not fired:
-            Renderer.line("Chua co su kien lon nao xay ra.")
+            Renderer.line("Chưa có sự kiện lớn nào xảy ra.")
         for event_id in fired:
             event = self.world.events.get(event_id)
             if event:
-                Renderer.line(f"{event['name_vn']} - nam {event['trigger_year']}/{event['trigger_month']}")
+                Renderer.line(f"{event['name_vn']} - năm {event['trigger_year']}/{event['trigger_month']}")
                 Renderer.line(f"  {event['description']}")
         Renderer.pause()

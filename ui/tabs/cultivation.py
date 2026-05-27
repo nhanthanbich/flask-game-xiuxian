@@ -14,17 +14,17 @@ class CultivationTab:
         changed = False
         while True:
             Renderer.clear()
-            Renderer.title("Tu Luyen")
-            Renderer.line(f"Linh can  : {self.cult.root_display(player['root_id'])}")
-            Renderer.line(f"Tien do   : {self.cult.exp_progress(player)}")
-            Renderer.line(f"Thoi gian : {time.display()}")
+            Renderer.title("Tu Luyện")
+            Renderer.line(f"Linh căn  : {self.cult.root_display(player['root_id'])}")
+            Renderer.line(f"Tiến độ   : {self.cult.exp_progress(player)}")
+            Renderer.line(f"Thời gian : {time.display()}")
             Renderer.line()
 
             durations = [1, 3, 6, 12]
             options = [
-                f"An cu {months:2} thang (+{self.cult.calc_exp(months, player['root_id'])} exp)"
+                f"Ẩn cư {months:2} tháng (+{self.cult.calc_exp(months, player['root_id'])} exp)"
                 for months in durations
-            ] + ["Quay lai"]
+            ] + ["Quay lại"]
             choice = Renderer.menu(options)
             if choice == len(durations):
                 return changed
@@ -38,31 +38,31 @@ class CultivationTab:
             Renderer.clear()
             if self.flavor:
                 Renderer.line(self.flavor.get("cultivation", player["realm_id"]))
-            Renderer.line(f"Da an cu {months} thang.")
-            Renderer.line(f"Nhan duoc {exp_gain} exp.")
-            Renderer.line(f"Thoi gian : {time.display()}")
+            Renderer.line(f"Đã ẩn cư {months} tháng.")
+            Renderer.line(f"Nhận được {exp_gain} exp.")
+            Renderer.line(f"Thời gian : {time.display()}")
 
             if self.cult.can_breakthrough(player):
                 info = self.cult.get_breakthrough_info(player)
                 nxt = info.get("next")
                 if nxt:
                     Renderer.line()
-                    Renderer.line(f"Du dieu kien dot pha len {nxt['name_vn']}!")
-                    Renderer.line(f"Rui ro that bai: {int(info.get('risk',0.0)*100)}% | Neu that bai: bo qua {info.get('failure_skip_months',0)} thang")
-                    choice = Renderer.menu(["Thu dot pha", "Cho sau"])
+                    Renderer.line(f"Đủ điều kiện đột phá lên {nxt['name_vn']}!")
+                    Renderer.line(f"Rủi ro thất bại: {int(info.get('risk',0.0)*100)}% | Nếu thất bại: bỏ qua {info.get('failure_skip_months',0)} tháng")
+                    choice = Renderer.menu(["Thử đột phá", "Cho sau"])
                     if choice == 0:
                         result = self.cult.attempt_breakthrough(player)
                         if result.get("success"):
                             realm = result["realm"]
-                            Renderer.line(f"Dot pha thanh cong: {realm['name_vn']}")
+                            Renderer.line(f"Đột phá thành công: {realm['name_vn']}")
                             if self.flavor:
                                 Renderer.line(self.flavor.get("breakthrough", realm["id"]))
                         else:
-                            Renderer.line("Dot pha that bai!")
+                            Renderer.line("Đột phá thất bại!")
                             skip = result.get("failure_skip_months", 0)
                             if skip:
                                 time.advance_months(skip)
-                                Renderer.line(f"Da mat {skip} thang do that bai.")
+                                Renderer.line(f"Đã mất {skip} tháng do thất bại.")
                             if result.get("message"):
                                 Renderer.line(result.get("message"))
             Renderer.pause()

@@ -13,16 +13,16 @@ class RelationTab:
         while True:
             npcs = self._known_npcs(world_state)
             Renderer.clear()
-            Renderer.title("Quan He NPC")
+            Renderer.title("Quan hệ NPC")
             if not npcs:
-                Renderer.line("Chua gap NPC nao.")
+                Renderer.line("Chưa gặp NPC nào.")
                 Renderer.pause()
                 return False
 
             options = [
                 self._npc_line(player, world_state, npc)
                 for npc in npcs
-            ] + ["Quay lai"]
+            ] + ["Quay lại"]
             choice = Renderer.menu(options)
             if choice == len(npcs):
                 return False
@@ -56,7 +56,7 @@ class RelationTab:
         event_types = world_state.get("npc_memories", {}).get(npc["id"], [])
         texts = self.npc.memory_texts(npc["id"], event_types)
         if not texts:
-            Renderer.line("NPC nay chua co ky uc dang ke ve nguoi.")
+            Renderer.line("NPC này chưa có ký ức đáng kể về ngươi.")
         for text in texts:
             Renderer.line(f"- {text}")
         Renderer.pause()

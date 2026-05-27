@@ -25,7 +25,7 @@ class Loader:
         if filepath in Loader._cache:
             return Loader._cache[filepath]
         if not os.path.exists(filepath):
-            raise FileNotFoundError(f"Khong tim thay file: {filepath}")
+            raise FileNotFoundError(f"Không tìm thấy file: {filepath}")
         with open(filepath, encoding="utf-8") as f:
             rows = list(csv.DictReader(f))
         Loader._cache[filepath] = rows
@@ -41,7 +41,7 @@ class Loader:
         if filepath in Loader._json_cache:
             return Loader._json_cache[filepath]
         if not os.path.exists(filepath):
-            raise FileNotFoundError(f"Khong tim thay file: {filepath}")
+            raise FileNotFoundError(f"Không tìm thấy file: {filepath}")
         with open(filepath, encoding="utf-8") as f:
             data = json.load(f)
         Loader._json_cache[filepath] = data

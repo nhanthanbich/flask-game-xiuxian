@@ -50,7 +50,7 @@ class Game:
         self.cult_tab = CultivationTab(self.cult, self.flavor)
         self.tech_tab = TechniqueTab(self.tech)
         self.world_tab = WorldTab(self.world, self.npc)
-        self.sect_tab = SectTab(self.world, self.npc, self.tech)
+        self.sect_tab = SectTab(self.world, self.npc, self.tech, self.flavor)
         self.relation_tab = RelationTab(self.npc)
         self.inventory_tab = InventoryTab(self.items)
         self.timeline_tab = TimelineTab(self.world)
@@ -75,7 +75,7 @@ class Game:
         Renderer.line()
 
         has_save = SaveManager.any_save()
-        options = ["Tiep tuc", "Tao nhan vat moi", "Thoat"] if has_save else ["Tao nhan vat moi", "Thoat"]
+        options = ["Tiếp tục", "Tạo nhân vật mới", "Thoát"] if has_save else ["Tạo nhân vật mới", "Thoát"]
         choice = Renderer.menu(options)
 
         if has_save:
@@ -94,12 +94,12 @@ class Game:
 
     def _create_character(self):
         Renderer.clear()
-        Renderer.title("Tao Nhan Vat")
+        Renderer.title("Tạo Nhân Vật")
         while True:
-            name = input("  Ten nhan vat: ").strip()
+            name = input("  Tên nhân vật: ").strip()
             if name:
                 break
-            Renderer.line("Hay nhap ten.")
+            Renderer.line("Hãy nhập tên.")
 
         roots = Loader.load(ROOTS_PATH)
         options = [
@@ -201,7 +201,7 @@ class Game:
 
     def _combat_menu(self):
         Renderer.clear()
-        Renderer.title("Xuat Chinh - Chon Doi Thu")
+        Renderer.title("Xuất Chinh - Chọn Đối Thủ")
         enemies = Loader.load(ENEMIES_PATH)
         realm_order = ["mortal", "qi_refining", "foundation", "core_formation", "nascent_soul", "deity_transform", "ascension"]
         cur_idx = realm_order.index(self.player["realm_id"])
@@ -209,12 +209,12 @@ class Game:
         options = [
             f"{e['name_vn']:18} | {e['element']:5} | HP:{e['hp']:>4} | {e['description'][:30]}"
             for e in available
-        ] + ["Quay lai"]
+        ] + ["Quay lại"]
         choice = Renderer.menu(options)
         if choice == len(available):
             return
         if not self.tech.has_any(self.player):
-            Renderer.line("Nguoi chua co ky nang nao trong slot.")
+            Renderer.line("Người chưa có kỹ năng nào trong slot.")
             Renderer.pause()
             return
 
@@ -235,8 +235,8 @@ class Game:
             info = self.cult.get_breakthrough_info(self.player)
             if info.get("ready"):
                 nxt = info.get("next")
-                Renderer.line(f"Du dieu kien dot pha len {nxt['name_vn']}!")
-                if Renderer.confirm("Dot pha ngay?"):
+                Renderer.line(f"Đủ điều kiện đột phá lên {nxt['name_vn']}!")
+                if Renderer.confirm("Đột phá ngay?"):
                     res = self.cult.attempt_breakthrough(self.player)
                     if res.get("success"):
                         realm = res["realm"]
@@ -251,7 +251,7 @@ class Game:
                         if skip:
                             self.time.advance_months(skip)
                             self._publish_time_tick()
-                        Renderer.line(res.get("message", "Dot pha that bai"))
+                        Renderer.line(res.get("message", "Đột phá thất bại"))
         elif result["result"] == "lose":
             self.event_bus.publish("combat_lose", {"player": self.player, "enemy_id": enemy_id})
         self._save_game()
@@ -261,41 +261,41 @@ class Game:
         data = {"time": self.time, "world_state": self.world_state, "logs": []}
         self.event_bus.publish("time_tick", data)
         if data.get("logs"):
-            Renderer.title("Bien Dong The Gioi")
+            Renderer.title("Biến Động Thế Giới")
             for log in data["logs"]:
                 Renderer.line(log)
             Renderer.pause()
 
     def _show_status(self):
         Renderer.clear()
-        Renderer.title("Thong Tin Tu Si")
+        Renderer.title("Thông Tin Tu Sĩ")
         realm = self.cult.realms[self.player["realm_id"]]
         root = self.cult.roots[self.player["root_id"]]
         sect_id = self.world_state.get("player_sect")
-        sect_name = self.world.sects[sect_id]["name_vn"] if sect_id else "Chua co"
-        Renderer.line(f"Ten        : {self.player['name']}")
-        Renderer.line(f"Canh gioi  : {realm['name_vn']} ({realm['name']})")
-        Renderer.line(f"Linh can   : {root['name_vn']} - {root['element']} he")
-        Renderer.line(f"Mon phai   : {sect_name}")
-        Renderer.line(f"Tien do    : {self.cult.exp_progress(self.player)}")
-        Renderer.line(f"Thoi gian  : {self.time.display_full()}")
+        sect_name = self.world.sects[sect_id]["name_vn"] if sect_id else "Chưa có"
+        Renderer.line(f"Tên        : {self.player['name']}")
+        Renderer.line(f"Cảnh giới  : {realm['name_vn']} ({realm['name']})")
+        Renderer.line(f"Linh căn   : {root['name_vn']} - {root['element']} hệ")
+        Renderer.line(f"Môn phái   : {sect_name}")
+        Renderer.line(f"Tiến độ    : {self.cult.exp_progress(self.player)}")
+        Renderer.line(f"Thời gian  : {self.time.display_full()}")
         Renderer.line()
-        Renderer.title("Ky Nang Hien Co")
+        Renderer.title("Kỹ Năng Hiện Có")
         for line in self.tech.get_slot_display(self.player):
             Renderer.line(line)
 
     def _slot_line(self, s: dict) -> str:
         if s["empty"]:
-            return f"Slot {s['slot']} - trong"
+            return f"Slot {s['slot']} - trống"
         realm_name = self.cult.realms.get(s["realm_id"], {}).get("name_vn", s["realm_id"])
         return f"Slot {s['slot']} {s['name']:14} | {realm_name:12} | {s['game_time']} (luu: {s['saved_at']})"
 
     def _load_menu(self) -> bool:
         Renderer.clear()
-        Renderer.title("Chon Save De Tiep Tuc")
+        Renderer.title("Chọn Save Để Tiếp Tục")
         slots = SaveManager.slot_list()
         filled = [s for s in slots if not s["empty"]]
-        choice = Renderer.menu([self._slot_line(s) for s in filled] + ["Quay lai"])
+        choice = Renderer.menu([self._slot_line(s) for s in filled] + ["Quay lại"])
         if choice == len(filled):
             return False
         chosen = filled[choice]
@@ -305,23 +305,23 @@ class Game:
         self.world_state = self.world.ensure_state(data.get("world_state"))
         self.active_slot = chosen["slot"]
         self._ensure_player_defaults()
-        Renderer.line(f"Da load slot {chosen['slot']}: {self.player['name']}")
+        Renderer.line(f"Đã load slot {chosen['slot']}: {self.player['name']}")
         Renderer.pause()
         return True
 
     def _save_menu(self):
         Renderer.clear()
-        Renderer.title("Luu Game")
+        Renderer.title("Lưu Game")
         slots = SaveManager.slot_list()
-        choice = Renderer.menu([self._slot_line(s) for s in slots] + ["Huy"])
+        choice = Renderer.menu([self._slot_line(s) for s in slots] + ["Hủy"])
         if choice == len(slots):
             return
         target = slots[choice]
-        if not target["empty"] and not Renderer.confirm(f"Ghi de Slot {target['slot']}?"):
+        if not target["empty"] and not Renderer.confirm(f"Ghi đè Slot {target['slot']}?"):
             return
         self.active_slot = target["slot"]
         self._save_game()
-        Renderer.line(f"Da luu vao Slot {self.active_slot}.")
+        Renderer.line(f"Đã lưu vào Slot {self.active_slot}.")
         Renderer.pause()
 
     def _pick_save_slot(self) -> int:

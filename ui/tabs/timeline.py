@@ -11,10 +11,10 @@ class TimelineTab:
 
     def run(self, player: dict, world_state: dict) -> bool:
         Renderer.clear()
-        Renderer.title("Lich Su The Gioi")
+        Renderer.title("Lịch Sử Thế Giới")
         fired = world_state.get("events_fired", [])
         if not fired:
-            Renderer.line("Chua co su kien nao duoc ghi lai.")
+            Renderer.line("Chưa có sự kiện nào được ghi lại.")
             Renderer.pause()
             return False
         for event_id in fired:
@@ -22,7 +22,7 @@ class TimelineTab:
             if not event:
                 continue
             Renderer.line(
-                f"{event['name_vn']} | Nam {event['trigger_year']} thang {event['trigger_month']} | "
+                f"{event['name_vn']} | Năm {event['trigger_year']} tháng {event['trigger_month']} | "
                 f"{event['effect_type']} {event['effect_value']}"
             )
             Renderer.line(f"  {event['description']}")
