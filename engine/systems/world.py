@@ -66,6 +66,12 @@ class WorldSystem:
         logs.extend(self._process_yearly_events(time, world_state))
         return logs
 
+    def _append_world_history(self, world_state: dict, year: int, event: str, detail: str = ""):
+        history = world_state.setdefault("world_history", [])
+        entry = {"year": year, "event": event, "detail": detail}
+        if entry not in history:
+            history.append(entry)
+
     def _process_yearly_events(self, time, world_state: dict) -> list[str]:
         """Xử lý các sự kiện theo năm."""
         logs = []
@@ -80,6 +86,7 @@ class WorldSystem:
             world_state["events_fired"].append(event["id"])
             self._apply_event(world_state, event)
             logs.append(f"{event['name_vn']}: {event['description']}")
+            self._append_world_history(world_state, time.year, event['name_vn'], event['description'])
         return logs
 
     def get_available_secret_realms(self, player: dict) -> list[dict]:
@@ -126,6 +133,16 @@ class WorldSystem:
             inv = player.setdefault("inventory", {})
             inv[reward_item] = inv.get(reward_item, 0) + 1
         return True, f"Hoàn thành {quest['name_vn']}."
+
+    def has_ready_sect_task(self, player: dict, world_state: dict) -> bool:
+        for quest in self.get_available_quests(world_state):
+            if quest["type"] == "item":
+                if player.get("inventory", {}).get(quest["target_id"], 0) >= int(quest["required_qty"]):
+                    return True
+            elif quest["type"] == "combat_win":
+                if world_state.get("combat_wins", 0) >= int(quest["required_qty"]):
+                    return True
+        return False
 
     def get_available_sects(self, player: dict) -> list[dict]:
         player_level = self.tech.get_realm_index(player["realm_id"])
@@ -221,6 +238,7 @@ class WorldSystem:
             threshold_event = self._check_sect_threshold(sect_id, sect, old_power, new_power, world_state)
             if threshold_event:
                 logs.append(threshold_event)
+                self._append_world_history(world_state, time.year, threshold_event, sect.get("description", ""))
 
         if time.year > 1:
             logs.append("Các tông môn âm thầm dịch chuyển thế lực trong năm mới.")

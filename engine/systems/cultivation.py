@@ -32,11 +32,17 @@ class CultivationSystem:
         self.realms   = Loader.load_by_id(REALMS_PATH)
         self.roots    = Loader.load_by_id(ROOTS_PATH)
         self.pressure_multipliers = self.settings.get("pressure_multipliers", {
-            1: 0.08, 2: 0.08, 3: 0.08,
-            4: 0.12, 5: 0.12, 6: 0.12,
-            7: 0.18, 8: 0.18, 9: 0.18,
-            10: 0.25, 11: 0.25, 12: 0.28,
-            13: 0.30, 14: 0.30, 15: 0.30,
+            0: 0.00,  # Mortal has almost no pressure buildup
+            1: 0.14, 2: 0.12, 3: 0.10,  # Qi Refining stays lightweight and onboarding-friendly
+            4: 0.10, 5: 0.11, 6: 0.12,  # Foundation begins to matter
+            7: 0.12, 8: 0.13, 9: 0.14,  # Core Formation becomes meaningful
+            10: 0.15, 11: 0.16, 12: 0.17,  # Nascent Soul brings instability
+            13: 0.18, 14: 0.19, 15: 0.20,  # Deity Transformation is oppressive
+            16: 0.21, 17: 0.21, 18: 0.22,
+            19: 0.22, 20: 0.23, 21: 0.23,
+            22: 0.24, 23: 0.24, 24: 0.24,
+            25: 0.24, 26: 0.24, 27: 0.24,
+            28: 0.24,
         })
 
         # Build backward compatibility mapping for old realm IDs
@@ -116,6 +122,30 @@ class CultivationSystem:
             return 0.12
         level = int(realm.get("level", 0))
         return self.pressure_multipliers.get(level, 0.30)
+
+    def breakthrough_pressure_requirement(self, realm_id: str | None = None) -> int:
+        """Trả về ngưỡng áp lực cần thiết để đột phá từ cảnh giới hiện tại."""
+        realm_id = self.normalize_realm_id(realm_id or "mortal")
+        realm = self.realms.get(realm_id, {"level": 0})
+        level = int(realm.get("level", 0))
+        thresholds = {
+            0: 0,
+            1: 10, 2: 15, 3: 25,
+            4: 35, 5: 45, 6: 55,
+            7: 60, 8: 65, 9: 70,
+            10: 72, 11: 78, 12: 84,
+            13: 85, 14: 90, 15: 95,
+            16: 95, 17: 95, 18: 95,
+            19: 95, 20: 95, 21: 95,
+            22: 95, 23: 95, 24: 95,
+            25: 95, 26: 95, 27: 95,
+            28: 95,
+        }
+        return thresholds.get(level, 95)
+
+    def get_breakthrough_item_id(self, realm: dict) -> str | None:
+        item_id = realm.get("breakthrough_item")
+        return item_id if item_id else None
 
     def apply_pressure_to_exp(self, player: dict, exp_gained: int) -> tuple[int, str | None]:
         """Áp dụng áp lực vào hiệu quả tu luyện hiện tại."""
@@ -215,8 +245,23 @@ class CultivationSystem:
         player["cultivation_pressure"] = pressure
 
     def reset_pressure(self, player: dict):
-        """Reset áp lực sau khi đột phá thành công."""
-        player["cultivation_pressure"] = 0
+        """Reset áp lực sau khi đột phá thành công.
+
+        Lower realms retain a light momentum after breakthrough,
+        while higher realms are allowed a deeper spiritual reset.
+        """
+        realm_id = self.normalize_realm_id(player.get("realm_id", "mortal"))
+        level = int(self.realms.get(realm_id, {}).get("level", 0))
+
+        if level <= 3:
+            player["cultivation_pressure"] = random.randint(10, 20)
+        elif level <= 6:
+            player["cultivation_pressure"] = random.randint(5, 12)
+        elif level <= 12:
+            player["cultivation_pressure"] = random.randint(0, 8)
+        else:
+            player["cultivation_pressure"] = 0
+
         player["breakthrough_ready"] = False
         player["breakthrough_risk"] = 0
 
@@ -240,16 +285,29 @@ class CultivationSystem:
 
     # ── Đột phá ─────────────────────────────────────────────────────────
     def get_breakthrough_info(self, player: dict) -> dict:
-        """Trả về thông tin đột phá: sẵn sàng, rủi ro, hậu quả thất bại."""
+        """Trả về thông tin đột phá: sẵn sàng, rủi ro, ngưỡng áp lực và điều kiện."""
         nxt = self.next_realm(player["realm_id"])
         if nxt is None:
-            return {"ready": False, "next": None, "risk": 0.0, "failure_skip_months": 0}
+            return {
+                "ready": False,
+                "next": None,
+                "risk": 0.0,
+                "failure_skip_months": 0,
+                "breakthrough_item": "",
+                "pressure_required": 0,
+                "pressure_ready": True,
+            }
         required = int(nxt.get("exp_required", 0))
+        pressure_required = self.breakthrough_pressure_requirement(player["realm_id"])
+        pressure_current = player.get("cultivation_pressure", 0)
         return {
             "ready":                player.get("exp", 0) >= required,
             "next":                 nxt,
             "risk":                 float(nxt.get("breakthrough_risk", 0.0)),
             "failure_skip_months":  int(nxt.get("failure_skip_months", 0)),
+            "breakthrough_item":    nxt.get("breakthrough_item", ""),
+            "pressure_required":    pressure_required,
+            "pressure_ready":       pressure_current >= pressure_required,
         }
 
     def attempt_breakthrough(self, player: dict, mode: str = "normal") -> dict:
@@ -267,8 +325,13 @@ class CultivationSystem:
 
         # Kiểm tra điều kiện
         if mode in ["normal", "seclusion"]:
-            if pressure < 80:
-                return {"success": False, "message": "Linh lực chưa đủ để đột phá.", "failure_skip_months": 0}
+            pressure_threshold = self.breakthrough_pressure_requirement(player.get("realm_id", "mortal"))
+            if pressure < pressure_threshold:
+                return {
+                    "success": False,
+                    "message": f"Áp lực chưa đủ để đột phá. Cần {pressure_threshold}% áp lực.",
+                    "failure_skip_months": 0,
+                }
 
         info = self.get_breakthrough_info(player)
         if not info["ready"] and info["next"] is None:
@@ -278,16 +341,27 @@ class CultivationSystem:
         if nxt is None:
             return {"success": False, "message": "Đã đạt cảnh giới tối cao.", "failure_skip_months": 0}
 
+        item_id = info.get("breakthrough_item")
+        item_bonus = 0.0
+        item_used = False
+        if item_id and player.get("inventory", {}).get(item_id, 0) > 0 and mode != "wait":
+            inv = player.setdefault("inventory", {})
+            inv[item_id] -= 1
+            if inv[item_id] <= 0:
+                del inv[item_id]
+            item_used = True
+            item_bonus = 0.10
+
         # Tính tỷ lệ thành công theo chế độ
         if mode == "normal":
             base_rate = 0.60
             pressure_bonus = (pressure / 100) * 0.20
-            success_rate = base_rate + pressure_bonus
+            success_rate = base_rate + pressure_bonus + item_bonus
             failure_damage = 30
             failure_pressure = 50
 
         elif mode == "seclusion":
-            success_rate = 0.85
+            success_rate = 0.85 + item_bonus
             failure_damage = 15
             failure_pressure = 60
 
@@ -318,7 +392,9 @@ class CultivationSystem:
                 "success": True,
                 "realm": nxt,
                 "lore": lore,
-                "seclusion_time": random.randint(1, 3) if mode == "seclusion" else 0
+                "seclusion_time": random.randint(1, 3) if mode == "seclusion" else 0,
+                "breakthrough_item": item_id,
+                "item_used": item_used
             }
         else:
             # Thất bại
@@ -329,6 +405,8 @@ class CultivationSystem:
                 "success": False,
                 "failure_skip_months": skip,
                 "hp_loss_percent": failure_damage,
+                "breakthrough_item": item_id,
+                "item_used": item_used,
                 "message": (
                     f"Đột phá thất bại! Thiên lôi giáng xuống —"
                     f" mất {skip} tháng dưỡng thương, tổn hại {failure_damage}% sinh lực."

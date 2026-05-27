@@ -300,6 +300,16 @@ def ensure_defaults(state):
     state["world_state"].setdefault("world_history", [])
 
 
+def get_breakthrough_block_reason(state):
+    if state.get("combat_state"):
+        return "Không thể đột phá khi đang trong chiến đấu."
+    if state.get("secret_state"):
+        return "Không thể đột phá trong lúc thám hiểm bí cảnh."
+    if world.has_ready_sect_task(state["player"], state["world_state"]):
+        return "Hoàn thành nhiệm vụ môn phái đã sẵn sàng trước khi đột phá."
+    return ""
+
+
 def current_time(state):
     return TimeSystem.from_dict(state["time"])
 
@@ -512,6 +522,12 @@ def breakthrough():
     player = state["player"]
     time = current_time(state)
 
+    block_reason = get_breakthrough_block_reason(state)
+    if block_reason:
+        log(state, block_reason)
+        save_state(state)
+        return redirect(url_for("game", tab="cultivate"))
+
     # Check pressure requirement
     pressure = player.get("cultivation_pressure", 0)
     if pressure < 80:
@@ -523,6 +539,9 @@ def breakthrough():
     if result.get("success"):
         realm = result["realm"]
         event_bus.publish("breakthrough", {"player": player, "realm": realm, "world_state": state["world_state"]})
+        if result.get("item_used") and result.get("breakthrough_item"):
+            item_name = items.items.get(result["breakthrough_item"], {}).get("name_vn", result["breakthrough_item"])
+            log(state, f"Đã sử dụng {item_name} để trợ đột phá.")
         log(state, f"Đột phá thành công lên {realm['name_vn']}!")
         if result.get("lore"):
             log(state, result["lore"])
@@ -531,12 +550,23 @@ def breakthrough():
         log(state, "— Thiên hạ rúng động —")
         log(state, f"Năm {time.year}, {player['name']} đạt {realm['name_vn']} tại nơi tu hành.")
 
+        if state["world_state"].get("player_sect"):
+            sect_id = state["world_state"]["player_sect"]
+            sect_boost = random.randint(3, 7)
+            state["world_state"]["sect_power"][sect_id] = world._clamp_power(
+                state["world_state"]["sect_power"].get(sect_id, 50) + sect_boost
+            )
+            log(state, f"{world.sects[sect_id]['name_vn']} tự hào, thế lực tăng thêm {sect_boost} điểm.")
+        else:
+            log(state, "Danh tiếng ngươi vang vọng giang hồ, mọi nơi đều biết đến tên tuổi này.")
+
         # Add to world history
         if "world_history" not in state["world_state"]:
             state["world_state"]["world_history"] = []
         history_entry = {
             "year": time.year,
-            "event": f"{player['name']} đột phá {realm['name_vn']}"
+            "event": f"{player['name']} đột phá {realm['name_vn']}",
+            "detail": f"Cảnh giới mới: {realm['name_vn']}"
         }
         if history_entry not in state["world_state"]["world_history"]:
             state["world_state"]["world_history"].append(history_entry)
@@ -570,6 +600,12 @@ def breakthrough_seclusion():
     player = state["player"]
     time = current_time(state)
 
+    block_reason = get_breakthrough_block_reason(state)
+    if block_reason:
+        log(state, block_reason)
+        save_state(state)
+        return redirect(url_for("game", tab="cultivate"))
+
     pressure = player.get("cultivation_pressure", 0)
     if pressure < 80:
         log(state, "Linh lực chưa đủ để bế quan đột phá.")
@@ -585,10 +621,24 @@ def breakthrough_seclusion():
         tick_time(state, time)
         set_time(state, time)
 
+        if result.get("item_used") and result.get("breakthrough_item"):
+            item_name = items.items.get(result["breakthrough_item"], {}).get("name_vn", result["breakthrough_item"])
+            log(state, f"Đã sử dụng {item_name} để trợ đột phá.")
+
         event_bus.publish("breakthrough", {"player": player, "realm": realm, "world_state": state["world_state"]})
         log(state, f"Sau {seclusion_time} tháng bế quan, đột phá thành công lên {realm['name_vn']}!")
         if result.get("lore"):
             log(state, result["lore"])
+
+        if state["world_state"].get("player_sect"):
+            sect_id = state["world_state"]["player_sect"]
+            sect_boost = random.randint(3, 7)
+            state["world_state"]["sect_power"][sect_id] = world._clamp_power(
+                state["world_state"]["sect_power"].get(sect_id, 50) + sect_boost
+            )
+            log(state, f"{world.sects[sect_id]['name_vn']} tự hào, thế lực tăng thêm {sect_boost} điểm.")
+        else:
+            log(state, "Danh tiếng ngươi vang vọng giang hồ, mọi nơi đều biết đến tên tuổi này.")
 
         text = flavor.get("breakthrough", realm["id"])
         if text:
@@ -613,6 +663,12 @@ def breakthrough_wait():
     state = get_state()
     player = state["player"]
     time = current_time(state)
+
+    block_reason = get_breakthrough_block_reason(state)
+    if block_reason:
+        log(state, block_reason)
+        save_state(state)
+        return redirect(url_for("game", tab="cultivate"))
 
     result = cult.attempt_breakthrough(player, mode="wait")
     danger_risk = result.get("risk", 0)
@@ -911,6 +967,12 @@ def view_cultivate():
     pressure_color = "var(--jade-essence)" if pressure < 60 else "var(--celestial-gold)" if pressure < 80 else "var(--blood-crystal)"
     pressure_level = "Ổn định" if pressure < 60 else "Cao" if pressure < 80 else "Nguy hiểm" if pressure < 95 else "Cực hạn"
 
+    pressure_requirement = info.get("pressure_required", 0)
+    pressure_requirement_text = (
+        f'<span>Ngưỡng đột phá hiện tại: {pressure_requirement}%</span>'
+        if info.get("next") is not None else
+        '<span>Chưa có cảnh giới tiếp theo.</span>'
+    )
     pressure_section = f"""
         <div class="pressure-section">
             <h3>Áp Lực Tu Luyện</h3>
@@ -927,19 +989,37 @@ def view_cultivate():
                 <span>Năm: {current_year}</span>
                 <span>Rủi ro trì hoãn: {breakthrough_risk}%</span>
                 <span>Sự kiện thế giới: {world_events_count}</span>
+                {pressure_requirement_text}
             </div>
             {f'<p class="pressure-warning" style="color: var(--blood-crystal);">⚠ Rủi ro trì hoãn: {breakthrough_risk}%</p>' if breakthrough_risk > 0 else ''}
         </div>
     """
 
     breakthrough_button = ""
+    breakthrough_block_reason = get_breakthrough_block_reason(state)
+    breakthrough_blocked = bool(breakthrough_block_reason)
+    assist_item = info.get("breakthrough_item")
+    assist_hint = ""
+    if assist_item:
+        item_name = items.items.get(assist_item, {}).get("name_vn", assist_item)
+        item_qty = player.get("inventory", {}).get(assist_item, 0)
+        assist_hint = (
+            f'<p class="breakthrough-tip">Ngươi có {item_qty} x {item_name}, sẽ được dùng tự động nếu đột phá.</p>'
+            if item_qty
+            else f'<p class="breakthrough-tip">Thu thập {item_name} để tăng tỷ lệ đột phá.</p>'
+        )
+
     if info.get("ready") and info.get("next"):
         nxt = info["next"]
         risk_percent = int(info["risk"] * 100)
         risk_color = "var(--jade-essence)" if risk_percent < 30 else "var(--celestial-gold)" if risk_percent < 60 else "var(--blood-crystal)"
 
-        can_breakthrough = pressure >= 80
-        button_disabled = "" if can_breakthrough else "disabled"
+        pressure_required = info.get("pressure_required", 0)
+        can_breakthrough = info.get("ready") and info.get("pressure_ready")
+        button_disabled = "disabled" if breakthrough_blocked or not can_breakthrough else ""
+        requirement_text = ""
+        if pressure_required > 0 and not info.get("pressure_ready"):
+            requirement_text = f'<p class="pressure-requirement">Cần áp lực ≥ {pressure_required}% (hiện tại {pressure}%)</p>'
 
         breakthrough_button = (
             f'<div class="breakthrough-section">'
@@ -952,8 +1032,11 @@ def view_cultivate():
             f'<div class="risk-display">'
             f'<span class="risk-label">Rủi ro cơ bản</span>'
             f'<span class="risk-value" style="color: {risk_color};">{risk_percent}%</span>'
-            f'</div></div>'
-            f'{f"<p class=\"pressure-requirement\">Cần áp lực ≥ 80% (hiện tại {pressure}%)</p>" if not can_breakthrough else ""}'
+            f'</div>'
+            f'{assist_hint}'
+            f'</div>'
+            f'{requirement_text}'
+            f'{f"<p class=\"breakthrough-block\">{breakthrough_block_reason}</p>" if breakthrough_blocked else ""}'
             f'<div class="breakthrough-options">'
             f'<form method="post" action="{url_for("breakthrough")}">'
             f'<button class="btn btn-breakthrough" {button_disabled}>Đột Phá Ngay (60% cơ bản)</button>'
@@ -962,18 +1045,19 @@ def view_cultivate():
             f'<button class="btn btn-seclusion" {button_disabled}>Bế Quan Đột Phá (85%, tốn thời gian)</button>'
             f'</form>'
             f'<form method="post" action="{url_for("breakthrough_wait")}">'
-            f'<button class="btn btn-wait">Chờ Thêm (+5% áp lực, +10% rủi ro)</button>'
+            f'<button class="btn btn-wait" {"disabled" if breakthrough_blocked else ""}>Chờ Thêm (+5% áp lực, +10% rủi ro)</button>'
             f'</form>'
             f'</div></div>'
         )
     else:
+        disabled_message = breakthrough_block_reason or "Chưa đủ tu vi để đột phá"
         breakthrough_button = (
             f'<div class="breakthrough-section disabled">'
             f'<div class="breakthrough-header">'
             f'<span class="breakthrough-icon">🔒</span>'
             f'<h3>Đột Phá Đề Trảnh</h3>'
             f'</div>'
-            f'<p class="muted">Chưa đủ tu vi để đột phá</p>'
+            f'<p class="muted">{disabled_message}</p>'
             f'</div>'
         )
     race = races.get(player.get("race_id", "human"))
@@ -2275,6 +2359,14 @@ def view_relations():
 def view_timeline():
     state = get_state()
     rows = []
+    for history in state["world_state"].get("world_history", []):
+        rows.append(
+            f"<div class='event-card'>"
+            f"<h3 class='event-title'>{history['event']}</h3>"
+            f"<p class='event-time'>Năm {history['year']}</p>"
+            f"<p class='muted'>{history.get('detail', '')}</p>"
+            f"</div>"
+        )
     for event_id in state["world_state"].get("events_fired", []):
         event = world.events.get(event_id)
         if event:

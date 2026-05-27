@@ -97,6 +97,112 @@ def test_breakthrough_modes():
     return True
 
 
+def test_breakthrough_thresholds():
+    """Ensure breakthrough thresholds are capped and do not force waiting near 100."""
+    print("\n" + "=" * 60)
+    print("TEST 5: Breakthrough Threshold Balance")
+    print("=" * 60)
+
+    settings = Loader.load_settings()
+    cult = CultivationSystem(settings)
+
+    thresholds = {
+        "qi_refining_1": 10,
+        "qi_refining_2": 15,
+        "qi_refining_3": 25,
+        "foundation_1": 35,
+        "foundation_2": 45,
+        "foundation_3": 55,
+        "core_formation_1": 60,
+        "core_formation_2": 65,
+        "core_formation_3": 70,
+        "nascent_soul_1": 72,
+        "nascent_soul_2": 78,
+        "nascent_soul_3": 84,
+        "deity_transform_1": 85,
+        "deity_transform_2": 90,
+        "deity_transform_3": 95,
+        "great_ascension_1": 95,
+        "true_immortal": 95,
+    }
+
+    all_passed = True
+    for realm_id, expected in thresholds.items():
+        actual = cult.breakthrough_pressure_requirement(realm_id)
+        print(f"{realm_id}: expected {expected}, actual {actual}")
+        if actual != expected:
+            all_passed = False
+
+    if all_passed:
+        print("PASS: Breakthrough thresholds are balanced.")
+    else:
+        print("FAIL: Some breakthrough thresholds are not balanced.")
+
+    return all_passed
+
+
+def test_breakthrough_item_support():
+    print("\n" + "=" * 60)
+    print("TEST 3: Breakthrough Item Support")
+    print("=" * 60)
+
+    settings = Loader.load_settings()
+    cult = CultivationSystem(settings)
+    player = {
+        "name": "Test Player",
+        "realm_id": "foundation_1",
+        "root_id": "metal",
+        "race_id": "human",
+        "exp": 2500,
+        "technique_slots": [None, None, None, None],
+        "inventory": {"qi_pill_major": 1},
+        "cultivation_pressure": 85,
+        "breakthrough_ready": True,
+    }
+
+    result = cult.attempt_breakthrough(player, mode="normal")
+    print(f"Breakthrough item result: {result}")
+    if result.get("breakthrough_item") == "qi_pill_major":
+        print("PASS: Breakthrough item is recognized and consumed if available.")
+        return True
+    print("FAIL: Breakthrough item logic not working.")
+    return False
+
+
+def test_sect_task_block():
+    print("\n" + "=" * 60)
+    print("TEST 4: Sect Task Block")
+    print("=" * 60)
+
+    settings = Loader.load_settings()
+    world = WorldSystem(settings)
+    player = {
+        "name": "Test Player",
+        "inventory": {"stone_pendant": 1},
+    }
+    world_state = world.default_state()
+    world_state["player_sect"] = "cloud_peak"
+    world_state["combat_wins"] = 0
+    crowd = world.has_ready_sect_task(player, world_state)
+    print(f"Ready task while no quest? {crowd}")
+
+    if not crowd:
+        print("PASS: No ready task when requirements are unmet.")
+    else:
+        print("FAIL: Invalid ready task detection.")
+        return False
+
+    # Create an available item quest and satisfy it
+    quest = next(q for q in world.sect_quests.values() if q["type"] == "item" and q["sect_id"] == "cloud_peak")
+    player["inventory"][quest["target_id"]] = int(quest["required_qty"])
+    world_state["player_sect"] = quest["sect_id"]
+    if world.has_ready_sect_task(player, world_state):
+        print("PASS: Ready sect task is detected correctly.")
+        return True
+    print("FAIL: Sect task ready state not detected.")
+    return False
+
+
 def test_npc_timelines():
     """Test the NPC timeline system."""
     print("\n" + "=" * 60)
@@ -185,6 +291,7 @@ def main():
     tests = [
         ("Cultivation Pressure", test_cultivation_pressure),
         ("Breakthrough Modes", test_breakthrough_modes),
+        ("Breakthrough Threshold Balance", test_breakthrough_thresholds),
         ("NPC Timelines", test_npc_timelines),
         ("World Tick", test_world_tick),
     ]
