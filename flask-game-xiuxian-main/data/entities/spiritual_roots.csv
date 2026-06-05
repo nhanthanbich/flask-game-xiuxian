@@ -1,7 +1,0 @@
-id,name,name_vn,element,exp_multiplier,off_element_multiplier,strong_against,weak_against,description
-metal,Metal Root,Kim Linh Căn,Kim,1.55,0.45,Mộc,Hỏa,"Sắc bén như thần binh. Công pháp Kim hệ có khả năng phá giáp và sát thương cực mạnh. Tu luyện hệ khác khó hòa hợp hơn. Kỵ Hỏa."
-wood,Wood Root,Mộc Linh Căn,Mộc,1.55,0.45,Thổ,Kim,"Sinh cơ kéo dài bất tuyệt. Mộc hệ mạnh về hồi phục, độc thuật và khống chế kéo dài. Kỵ Kim."
-water,Water Root,Thủy Linh Căn,Thủy,1.55,0.45,Hỏa,Thổ,"Linh lực lưu chuyển liên miên như thủy triều. Thủy hệ thiên về khống chế, hồi linh và chiến đấu bền bỉ. Kỵ Thổ."
-fire,Fire Root,Hỏa Linh Căn,Hỏa,1.55,0.45,Kim,Thủy,"Bạo phát mãnh liệt như thiên hỏa. Hỏa hệ có sát thương cao nhất nhưng tiêu hao linh lực cực lớn. Kỵ Thủy."
-earth,Earth Root,Thổ Linh Căn,Thổ,1.55,0.45,Thủy,Mộc,"Nặng như sơn nhạc. Thổ hệ nổi bật ở phòng ngự, ổn định và chống khống chế. Kỵ Mộc."
-five_elements,Five Elements Root,Ngũ Hành Linh Căn,Ngũ Hành,0.7,0.7,None,None,"Mang đầy đủ khí tức ngũ hành nhưng không hệ nào nổi trội. Tu luyện mọi công pháp đều ổn định, không bị nguyên tố khắc chế và có thể dung hợp đa hệ công pháp ở cảnh giới cao."

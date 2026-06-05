@@ -1,4 +1,0 @@
-id,name_vn,giver_npc,description,start_location,requirement,branch_type,branch_count
-QB001,Cứu Nữ Tú Anh,lao_dao_cuu_van,"Nữ đệ tử mất tích sau khi vào Tuyết Phong Sơn điều tra. Lão Đạo Cửu Vân nhờ ngươi tìm kiếm. Dấu vết dẫn về phía Yêu Tộc địa bàn.",Tuyết Phong Sơn,"relationship_lao_dao_cuu_van >= 30",rescue_choice,2
-QB002,Phân Biệt Chính Tà,nhan_vuong,"Có điệp viên tà đạo đã xâm nhập triều đình, gây rối loạn từ bên trong. Nhân Vương cần ngươi xử lý — nhưng cách xử lý sẽ định hình tương lai.",Triều Đình,"reputation >= 50",morality_choice,3
-QB003,Thừa Kế Ngôi Vị,su_phu_hoa_yen,"Sư phụ sắp bế quan trăm năm, cần chọn người kế vị chánh tông chủ. Hai đệ tử xuất sắc nhất tranh đấu, ngươi có vai trò quyết định.",Thanh Vân Tông,"faction == thanh_van and sect_contribution >= 100",faction_choice,2

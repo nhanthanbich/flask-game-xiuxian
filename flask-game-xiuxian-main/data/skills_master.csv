@@ -1,9 +1,0 @@
-id,name,element,cost_type,cost_value,cooldown,tags,learn_source,learn_requirement,rank,power_level
-SK001,Kiếm Khí Lâm Trần,金,qi,50,0,basic|orthodox,sect,faction == Thanh_Van,1,1
-SK002,Tuyệt Ác Thiêu Thiên,火,qi,80,2,demonic|forbidden|aoe,tomb,corruption >= 50 and realm >= Kết_Đan,3,8
-SK003,Lục Anh Hồi Sinh,木,qi,60,1,healing|utility|orthodox,sect,faction == Thanh_Van or npc_teach == Hoa_Yên,2,2
-SK004,Chiến Ý Tăng Thiêm,none,qi,70,0,buff|utility,npc,relationship_Chính_Tông >= 50,2,3
-SK005,Bê Bối Chi Pháp,none,qi,90,1,cc|utility|forbidden,tomb,realm >= Trúc_Cơ,2,4
-SK006,Thiên E Hút Huyết,none,qi,85,2,life_steal|demonic|forbidden,npc,learn_demonic_npc == Tử_Phong,3,7
-SK007,Lục Sâu Độc Bệnh,木,qi,65,1,debuff|utility,npc,learn_npc_any_sect,1,2
-SK008,Kiếm Thần Bất Hối,金,qi,120,3,basic|heavy|ultimate,sect,realm >= Nguyên_Anh and faction_rank == elder,4,9
