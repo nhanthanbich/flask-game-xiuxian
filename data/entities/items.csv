@@ -1,0 +1,35 @@
+id,name_vn,type,grade,element,effect_type,effect_value,req_realm,max_stack,description,lore
+qi_pill_minor,Tụ Khí Đan,pill,1,None,heal_mp,20,qi_refining,20,Viên đan cơ bản nhất ngưng tụ linh khí tản mạn thành dạng dùng được,Thứ đầu tiên mọi tu sĩ học cách luyện
+qi_pill_major,Khai Mạch Đan,pill,1,None,heal_mp,50,qi_refining,10,Thông khai kinh mạch tắc nghẽn giúp linh lực lưu thông mạnh hơn,Đan phương lưu truyền từ thời các lạc hầu
+red_restoration,Hồi Nguyên Đan Nhỏ,pill,1,None,heal_hp,40,qi_refining,20,Hồi phục vết thương nông và ổn định khí huyết,Bán ở mọi chợ linh dược
+blood_coagulant,Chỉ Huyết Tán,pill,1,None,heal_hp,80,qi_refining,10,Cầm máu tức thì và giảm tổn thương ngoài da,Ban đầu là thuốc quân y cổ chiến trường
+qi_grass,Linh Khí Thảo,material,1,None,heal_mp,15,qi_refining,30,Thảo dược linh khí tự nhiên dễ thu thập,Phổ biến dưới chân linh sơn
+blood_lotus,Huyết Liên Tử,material,1,None,heal_hp,30,qi_refining,20,Hạt sen đỏ từ đầm linh khí có vị ngọt hậu đắng,Ngư dân Bắc Hải thường dùng
+iron_talisman,Thiết Phù Chú,scroll,1,None,def_buff,8,qi_refining,10,Phù chú tạo lá chắn linh lực yếu dùng một lần,Pháp phù nhập môn
+wind_boots,Phong Hành Phù,charm,1,None,speed_boost,10,qi_refining,20,Phù tăng tốc di chuyển trong thời gian ngắn,Thường dùng khi chạy nạn
+spirit_tonic,Dưỡng Linh Hoàn,pill,2,None,heal_mp,100,foundation,10,Bồi bổ căn cơ linh lực sâu hơn đan sơ cấp,Tập hợp hơn hai mươi vị linh thảo
+foundation_pill,Trúc Cơ Đan,pill,2,None,exp_boost,150,foundation,5,Tăng tốc tu luyện trong thời gian ngắn,Đan phương Thương Sơn Phái
+golden_restoration,Hồi Nguyên Đại Đan,pill,2,None,heal_hp,200,foundation,5,Hồi phục thương tích nặng kể cả nội tạng,Kim Huyết Thảo là chủ dược
+spirit_mushroom,Linh Chi Vân Cái,material,2,None,exp_boost,80,foundation,10,Nấm linh chi trăm năm tuổi mọc trên đá thiêng,Quý vật vùng núi linh mạch
+jade_marrow,Ngọc Tủy Lộ,material,2,None,stat_boost,10,foundation,10,Tinh chất ngọc linh thiên nhiên tăng thể chất,Thu trong đêm mạch ngọc
+water_bracelet,Thủy Linh Dịch,pill,2,Thủy,heal_mp,60,foundation,15,Dịch linh thủy hồi phục linh lực nhanh,Chiết xuất từ linh tuyền
+fire_ring,Xích Viêm Tán,pill,2,Hỏa,stat_boost,20,foundation,15,Tăng bộc phát công pháp trong thời gian ngắn,Hỏa tinh thạch nghiền
+metal_gauntlet,Kim Cương Tán,pill,2,Kim,def_buff,25,foundation,15,Tăng độ cứng cơ thể tạm thời,Dùng trước khi vào bí cảnh
+earth_belt,Hậu Thổ Huyết Dịch,pill,2,Thổ,def_buff,30,foundation,15,Tăng ổn định khí huyết chống sốc linh lực,Long mạch tinh luyện
+wood_pendant,Mộc Linh Tinh,pill,2,Mộc,heal_hp,50,foundation,15,Tăng hồi phục sinh cơ tự nhiên,Mộc linh ngàn năm
+dragon_saliva,Long Diên Hương,material,3,None,exp_boost,200,core_formation,5,Tinh chất yêu long cực hiếm,Không thể thu bằng giết
+phoenix_feather,Phượng Vũ Linh Tinh,material,4,None,stat_boost,30,nascent_soul,3,Lông phượng chứa hỏa linh khí thuần nhất,Chỉ xuất hiện khi tái sinh
+core_nurture,Dưỡng Đan Hoàn,pill,3,None,heal_mp,200,core_formation,5,Ổn định kim đan vừa hình thành,Lớp bảo hộ nội đan
+heart_cleanse,Tâm Thanh Đan,pill,3,None,exp_boost,400,core_formation,3,Tẩy tạp chất kim đan thúc đẩy tu luyện,Đan hiếm trung châu
+soul_mending,Nguyên Thần Bổ,pill,3,None,heal_hp,500,core_formation,3,Hồi phục nguyên thần tổn thương,Cực hiếm bí cảnh
+five_ghost_banner,Ngũ Quỷ Trận Phù,scroll,3,None,stat_boost,35,core_formation,5,Tăng lực nhưng hao tổn thần trí,Vật phẩm tà đạo cấm thuật
+azure_jade_armor,Thanh Ngọc Phù Văn,scroll,3,None,def_buff,60,core_formation,5,Kích hoạt lá chắn linh lực cổ trận,Tàn tích trung châu
+thunder_seal,Lôi Ấn Phù,scroll,3,Kim,burst_damage,50,core_formation,5,Phù kích nổ lôi lực một lần,Thiên lôi mới kích hoạt
+nascent_mirror,Nguyên Anh Tâm Kính,relic,4,None,stat_boost,80,nascent_soul,1,Cổ kính giúp tăng thấu hiểu công pháp,Di vật cổ tu sĩ
+heaven_sword_seal,Thiên Kiếm Phù Ấn,scroll,4,Kim,burst_damage,100,nascent_soul,3,Triệu hồi kiếm khí cổ xưa một lần,Bản sao kiếm ý thất truyền
+dragon_scale_robe,Long Lân Dịch,pill,4,None,def_buff,120,nascent_soul,3,Dịch long khí tăng phòng thủ tạm thời,Không thể tái tạo
+void_ring,Hư Không Nạp Phù,relic,5,None,utility,1,deity_transform,1,Mở không gian chứa đồ tạm thời,Công pháp không gian cổ
+chaos_bead,Hỗn Nguyên Linh Châu,relic,5,None,stat_boost,200,deity_transform,1,Bộc phát toàn bộ linh lực trong thời gian ngắn,Di vật khai thiên
+ancient_beast_blood,Huyết Thú Thượng Cổ,material,3,None,stat_boost,120,core_formation,10,Huyết tinh từ yêu thú cổ đại tăng thể chất,Chỉ thu từ di tích
+star_iron_fragment,Thiên Tinh Thiết Phấn,material,4,None,craft_material,1,nascent_soul,20,Khoáng vật rơi từ thiên ngoại dùng luyện khí,Không thuộc thế giới này
+void_sand,Hư Không Sa,material,5,None,craft_material,1,deity_transform,10,Cát không gian dùng chế tạo pháp bảo không gian,Trích từ vết nứt hư không

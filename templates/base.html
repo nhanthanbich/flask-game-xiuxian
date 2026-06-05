@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0,
+                 viewport-fit=cover">
+  <title>Tu Tiên Ký - Immortal Cultivation</title>
+
+  <!-- Mystical Font Arsenal -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=ZCOOL+XiaoWei&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☯</text></svg>">
+</head>
+<body>
+  <!-- Spiritual Energy Particles Background -->
+  <div class="spirit-particles" aria-hidden="true"></div>
+
+  {% block content %}{% endblock %}
+
+  <script>
+    // Auto-scroll heavenly records panel
+    const panel = document.querySelector('.console-panel');
+    if (panel) {
+      panel.scrollTop = panel.scrollHeight;
+
+      // Add fade-in animation to new entries
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === 1) {
+              node.style.opacity = '0';
+              node.style.transform = 'translateY(10px)';
+              requestAnimationFrame(() => {
+                node.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                node.style.opacity = '1';
+                node.style.transform = 'translateY(0)';
+              });
+            }
+          });
+        });
+        panel.scrollTop = panel.scrollHeight;
+      });
+      observer.observe(panel, { childList: true, subtree: true });
+    }
+
+    // Spiritual energy ripple effect on buttons
+    document.querySelectorAll('.btn, button, a').forEach((element) => {
+      element.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        ripple.className = 'spirit-ripple';
+        const rect = this.getBoundingClientRect();
+        ripple.style.left = `${e.clientX - rect.left}px`;
+        ripple.style.top = `${e.clientY - rect.top}px`;
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+      });
+    });
+  </script>
+
+  <style>
+    /* Dynamic Spirit Ripple Effect */
+    .spirit-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(79, 209, 165, 0.6) 0%, transparent 70%);
+      transform: scale(0);
+      animation: rippleEffect 0.6s ease-out;
+      pointer-events: none;
+      width: 100px;
+      height: 100px;
+      margin-left: -50px;
+      margin-top: -50px;
+    }
+
+    @keyframes rippleEffect {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  </style>
+</body>
+</html>

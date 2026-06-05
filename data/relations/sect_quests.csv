@@ -1,0 +1,6 @@
+id,sect_id,name_vn,type,target_id,required_qty,reward_rank,reward_power,reward_item,description
+cloud_herbs,cloud_peak,Nộp Nguyệt Linh Thảo,item,moon_grass,1,1,3,gathering_pill,Nộp linh thảo cho dược đường để đổi công trạng.
+flame_trial,scarlet_flame,Thử Lửa Chiến Ý,combat_win,any,2,1,4,minor_mp_pill,Thắng hai trận để chứng minh chiến ý Hỏa hệ.
+sword_merit,golden_sword,Luyện Kiếm Công,item,ember_jade,1,1,5,minor_heal_pill,Dâng pháp bảo nhỏ để đổi điểm công huân.
+water_patrol,deep_water,Tuần Tra Thủy Vực,combat_win,any,2,1,4,moon_grass,Đẩy lui yêu vật ven hồ Huyền Thủy.
+yao_offering,moon_yao,Dâng Long Căn Thảo,item,dragon_root,1,1,5,minor_mp_pill,Dâng linh thảo cho Nguyệt Yêu Động để được công nhận.
