@@ -1,0 +1,13 @@
+skill_id,effect_name,effect_type,value,element,scaling,duration,success_chance,stat,crit_chance,stack_behavior,resist_check,damage_per_turn
+SK001,normal_damage,damage,95,金,att,0,0,none,0.2,none,false,0
+SK002,aoe_damage,damage,75,火,qi,0,0,none,0.1,none,false,0
+SK002,fire_burn,dot,0,火,none,4,0,none,0,refresh,false,18
+SK003,single_heal,heal,140,木,qi,0,0,none,0,none,false,0
+SK004,attack_boost,buff,25,none,none,3,0,att,0,none,false,0
+SK005,stun_attack,cc,0,none,none,1,0.65,none,0,none,false,0
+SK006,vampiric_strike,damage,75,none,att,0,0,none,0.15,none,false,0
+SK006,life_steal_effect,life_steal,0,none,none,0,0,none,0,none,false,0
+SK007,poison_debuff,debuff,0,木,none,4,0.75,none,0,none,true,0
+SK007,poison_damage,dot,0,木,none,4,0,none,0,stack,false,12
+SK008,heavy_blow,damage,160,金,att,0,0.15,none,0.12,none,false,0
+SK008,weaken_debuff,debuff,20,none,none,3,0.8,none,0,none,false,0

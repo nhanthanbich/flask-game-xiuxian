@@ -1,0 +1,104 @@
+id,npc_id,trigger_event,memory_text,relation_delta_respect,relation_delta_trust,relation_delta_fear
+m_van_join,elder_van,join_sect,"Ngươi đã chọn Vân Đỉnh Tông. Nền móng đứng vững hay không phụ thuộc vào ngày đầu tiên.",2,0,1
+m_van_breakthrough,elder_van,breakthrough,"Ngươi đột phá — căn cơ chắc hơn ta nghĩ. Vân Đỉnh Tông không uổng công.",5,2,1
+m_van_win_combat,elder_van,win_combat,"Thắng trận mà không mất bình tĩnh. Đó mới là điều ta muốn thấy.",3,1,0
+m_van_lose_combat,elder_van,lose_combat,"Thua là chuyện thường. Điều ta muốn biết là ngươi học được gì.",0,1,0
+m_van_leave_sect,elder_van,leave_sect,"Ngươi ra đi. Ta không giữ — nhưng cánh cửa Vân Đỉnh Sơn không bao giờ khép với kẻ đã từng là đệ tử.",0,-2,0
+m_lam_join,elder_lam,join_sect,"Ngươi đã nhập môn và chấp nhận giới luật. Đừng để ta phải nhắc hai lần.",2,1,0
+m_lam_breakthrough,elder_lam,breakthrough,"Ngươi đột phá trước mặt đồng môn. Tốt — nhưng đừng để điều đó làm ngươi kiêu ngạo.",4,1,1
+m_lam_win_combat,elder_lam,win_combat,"Thắng trận là điều ta mong đợi. Đừng bắt ta phải khen — cứ tiếp tục làm vậy.",3,0,0
+m_lam_lose_combat,elder_lam,lose_combat,"Thua trận. Ta không thất vọng — ta thất vọng nếu ngươi không tìm hiểu vì sao.",0,0,0
+m_lam_break_rules,elder_lam,break_rules,"Ngươi vi phạm giới luật. Ta đã cảnh báo.",-3,-3,1
+m_an_join,senior_an,join_sect,"Ngươi mới vào môn phái cần được dẫn dắt. Ta nhớ cái cảm giác đó — sẽ không bỏ mặc ngươi.",1,4,0
+m_an_breakthrough,senior_an,breakthrough,"Ngươi đột phá rồi. Ta vui thật sự — không phải vì phép lịch sự.",3,3,0
+m_an_win_combat,senior_an,win_combat,"Ngươi thắng một trận làm đồng môn phấn chấn. Cảm giác đó không mua được bằng linh thạch.",3,2,0
+m_an_ask_help,senior_an,ask_help,"Ngươi hỏi ta giúp đỡ. Ta không thông minh nhất — nhưng ta sẽ không từ chối.",0,3,0
+m_an_gift,senior_an,gift,"Ngươi tặng ta lễ vật. Không cần thiết — nhưng ta cảm ơn.",1,2,0
+m_thao_first_meet,junior_thao,first_meet,"Sư huynh/sư tỷ mới! Ngươi có biết long mạch dưới chân núi này dài bao nhiêu không?",0,2,0
+m_thao_breakthrough,junior_thao,breakthrough,"Ngươi đột phá rồi! Ta sẽ học theo ngươi. Vân Thạch Trưởng Lão bảo ta còn lâu mới bằng ngươi.",2,1,0
+m_thao_teach,junior_thao,teach_disciple,"Ngươi dạy ta thứ gì đó. Ta sẽ nhớ — ta nhớ mọi thứ.",1,4,0
+m_hong_join,elder_hong,join_sect,"Ngươi vào Liệt Diệm Cốc. Đừng mang theo thói quen cũ — ở đây chỉ có một đòn.",2,0,1
+m_hong_breakthrough,elder_hong,breakthrough,"Hỏa tâm của ngươi đã được thử thách và không vỡ. Ta ghi nhận.",5,0,2
+m_hong_win_combat,elder_hong,win_combat,"Ngươi kết liễu bằng một đòn. Đúng theo phong cách Liệt Diệm Cốc.",4,1,1
+m_hong_lose_combat,elder_hong,lose_combat,"Ngươi thua. Thua vì do dự hay vì không đủ mạnh? Có sự khác biệt.",0,-1,0
+m_hong_win_fast,elder_hong,win_fast,"Một đòn. Không cần đòn thứ hai. Ta bắt đầu thấy ngươi xứng đáng.",5,2,2
+m_hoa_first_meet,sister_hoa,first_meet,"Ngươi là người mới. Ta không quan tâm đến lý lịch — chỉ quan tâm đến ngươi đứng vững bao lâu.",0,0,1
+m_hoa_win_combat,sister_hoa,win_combat,"Ngươi thắng. Ta muốn thử ngươi — nhưng chưa phải lúc.",2,1,1
+m_hoa_lose_combat,sister_hoa,lose_combat,"Ngươi thua. Đừng để điều đó xảy ra trước mặt sư phụ.",0,-1,0
+m_sat_join,forge_master_sat,join_sect,"Ngươi vào Thiết Lư Hội. Bắt đầu bằng cách mài một thanh kiếm — không dùng linh lực.",1,1,0
+m_sat_breakthrough,forge_master_sat,breakthrough,"Ngươi đột phá. Tốt — kim loại cũng cần nhiệt độ đủ cao mới thành hình.",3,2,0
+m_sat_help_forge,forge_master_sat,help_craft,"Ngươi phụ ta trong xưởng rèn. Tay ngươi chưa chai — nhưng ý chí thì đúng hướng.",2,3,0
+m_sat_gift,forge_master_sat,gift,"Ngươi tặng vật phẩm. Ta không cần quà — ta cần kẻ biết rèn giũa bản thân.",1,1,0
+m_cuong_first_meet,apprentice_cuong,first_meet,"Ngươi cũng mới vào à? Ta mới hơn ngươi một tháng. Nếu cần hỏi gì về lò rèn thì hỏi ta.",0,2,0
+m_cuong_compete,apprentice_cuong,compete,"Ngươi và ta so tài. Tốt — cạnh tranh làm cả hai mạnh hơn.",1,1,0
+m_luu_join,elder_luu,join_sect,"Ngươi tìm được Thanh Ảnh Các. Điều đó có nghĩa là ngươi đã đủ kiên nhẫn để xứng đáng.",3,1,0
+m_luu_win_fast,elder_luu,win_fast,"Ngươi thắng nhanh và không để lại dấu vết. Thanh Ảnh Các đã không nhận nhầm.",4,2,0
+m_luu_seen,elder_luu,seen_secret,"Ta đã ở đó. Ngươi không nhìn thấy ta — nhưng ta nhìn thấy ngươi.",2,0,2
+m_shadow_ty_first_meet,shadow_ty,first_meet,"...",0,1,0
+m_shadow_ty_secret,shadow_ty,share_secret,"Ngươi nói với ta điều mà không nói với ai khác. Ta sẽ không quên.",0,4,0
+m_shadow_ty_spy,shadow_ty,found_spying,"Ta nghe được câu chuyện của ngươi hôm qua. Đừng lo — ta không nói với ai.",0,2,1
+m_current_join,current_master,join_sect,"Nước không vội — nhưng cuối cùng cũng đến biển. Ngươi vào môn phái ta. Đừng vội.",1,2,0
+m_current_breakthrough,current_master,breakthrough,"Ngươi đột phá. Chậm hay nhanh không quan trọng — quan trọng là ngươi đã đến.",3,3,0
+m_current_patient,current_master,show_patience,"Ngươi chờ đợi khi người khác đã bỏ cuộc. Ta ghi nhớ điều đó.",2,4,0
+m_lien_join,sister_lien,join_sect,"Chào ngươi. Ngươi có bị thương gì không? Để ta xem.",0,3,0
+m_lien_gift,sister_lien,gift,"Ngươi tặng ta lễ vật đúng lúc. Cảm ơn — ta sẽ nhớ điều này.",1,4,0
+m_lien_hurt,sister_lien,got_hurt,"Ngươi bị thương nặng. Ta sẽ chữa trị — lần này không tính tiền.",0,3,0
+m_thunder_bao_join,thunder_elder_bao,join_sect,"Ngươi đã tiêu diệt ma tu để đứng ở đây. Ta thấy rồi. Lôi Phạt Điện chào đón ngươi.",4,2,0
+m_thunder_bao_kill_mo,thunder_elder_bao,kill_mo_enemy,"Ngươi diệt thêm tên ma tu. Mỗi tên bị tiêu diệt là một lời hứa được thực hiện.",5,2,1
+m_thunder_bao_lose,thunder_elder_bao,lose_combat,"Ngươi thua. Ta không trách — nhưng nhớ kẻ đó để lần sau không thua nữa.",0,0,0
+m_thunder_vu_join,thunder_disciple_vu,join_sect,"Ngươi vào đây vì lý tưởng hay vì thù hận? Cả hai đều được — nhưng phải biết mình đang chọn cái gì.",1,1,0
+m_thunder_vu_kill_mo,thunder_disciple_vu,kill_mo_enemy,"Ngươi diệt ma tu. Ta không ganh tị — ta mừng.",3,2,0
+m_thunder_vu_rival,thunder_disciple_vu,rival_duel,"Ngươi và ta thử sức. Kết quả không quan trọng — cách ngươi chiến đấu mới quan trọng.",2,2,0
+m_doc_join,poison_elder_doc,join_sect,"Ngươi vào Độc Ảnh Song Tông. Độc tính không nằm ở linh thảo — mà nằm ở kiên nhẫn. Ngươi có đủ không?",2,0,1
+m_doc_win_streak,poison_elder_doc,win_streak,"Ngươi thắng năm trận liên tiếp mà không chết. Ta bắt đầu tò mò về ngươi.",3,2,0
+m_doc_secret,poison_elder_doc,share_secret,"Ngươi biết thứ gì đó về ta. Ta biết thứ gì đó về ngươi. Chúng ta hiểu nhau.",0,3,2
+m_bach_join,crane_elder_bach,join_sect,"Ngươi vào Kim Hạc Song Kiếm Tông bằng kiếm ý và thân pháp. Ta chấp nhận ngươi — nhưng kỳ vọng của ta cao.",3,1,0
+m_bach_win_fast,crane_elder_bach,win_fast,"Ngươi thắng trong năm lượt. Đó không phải may mắn — đó là nghệ thuật.",5,3,0
+m_bach_poem,crane_elder_bach,discuss_art,"Ngươi hiểu rằng kiếm pháp và thơ ca không khác nhau. Đây là người ta muốn truyền thụ.",2,4,0
+m_tuong_first_meet,crane_disciple_tuong,first_meet,"Ngươi đến từ nhân tộc à? Tốt — ta có nhiều điều muốn hỏi về thơ ca của nhân tộc.",0,2,0
+m_tuong_spar,crane_disciple_tuong,spar,"Ngươi và ta luyện kiếm cùng nhau. Ngươi chuyển động đẹp hơn ta nghĩ.",2,2,0
+m_thien_join,star_elder_thien,join_sect,"Ngươi đã ngồi tĩnh tọa sáu tháng để được vào đây. Ta đã biết ngươi sẽ đến — từ trước khi ngươi quyết định.",3,1,2
+m_thien_ask_future,star_elder_thien,ask_future,"Ngươi hỏi ta về tương lai. Ta biết câu trả lời — nhưng có những thứ ngươi cần tự trải nghiệm.",2,2,0
+m_thien_event_true,star_elder_thien,world_event_occurs,"Sự kiện đó xảy ra đúng như ta đọc được từ thiên tượng. Ngươi hiểu tại sao ta im lặng trước đây chưa?",3,2,1
+m_khong_join,void_elder_khong,join_sect,"Ngươi mang cả Thủy hệ lẫn Hỏa hệ vào đây. Nghịch lý — đúng. Nhưng nghịch lý mới tạo ra thứ gì đó thật sự mới.",3,2,0
+m_khong_dual_element,void_elder_khong,use_dual_element,"Ngươi dùng cả hai hệ trong một trận. Ta thấy rồi — ngươi đang hiểu.",4,3,0
+m_khong_question,void_elder_khong,ask_philosophy,"Ngươi hỏi câu hỏi mà ta chờ từ lâu. Ngồi xuống — câu trả lời cần thời gian.",2,4,0
+m_huyen_first_meet,void_disciple_huyen,first_meet,"Ngươi vào đây à? Tốt — ta đang cần người tranh luận về lý thuyết không gian-hỏa hệ. Ngươi có quan điểm gì không?",0,2,0
+m_huyen_debate,void_disciple_huyen,debate,"Ngươi tranh luận với ta đủ lâu để ta thay đổi quan điểm. Điều đó không dễ.",2,3,0
+m_nguyet_join,yao_elder_nguyet,join_sect,"Ngươi vào Nguyệt Yêu Liên Minh. Ta cảm nhận được cảm xúc của ngươi ngay lúc này — ngươi có chút sợ hãi. Điều đó tốt.",2,1,1
+m_nguyet_respect_yao,yao_elder_nguyet,respect_yao,"Ngươi đối xử với yêu tộc bằng sự tôn trọng thật sự. Ta cảm nhận được sự chân thành — không phải lịch sự giả tạo.",3,4,0
+m_nguyet_secret,yao_elder_nguyet,know_secret,"Ngươi biết điều ta không nói với ai. Ta tự hỏi ngươi tìm ra từ đâu.",0,1,2
+m_lam_vu_first_meet,yao_disciple_lam,first_meet,"Nhân tộc. Ta không ghét nhân tộc — ta chỉ chưa gặp đủ nhân tộc đáng để không ghét.",0,0,1
+m_lam_vu_prove,yao_disciple_lam,prove_strength,"Ngươi chứng minh được bản thân trước mặt ta. Ta sẽ không thử ngươi nữa — lần này.",2,2,0
+m_lam_vu_friend,yao_disciple_lam,become_friend,"Ngươi là nhân tộc đầu tiên ta thật sự gọi là bạn. Đừng làm ta hối hận.",3,5,0
+m_hung_join,beast_elder_hung,join_sect,"Ngươi muốn vào Vạn Yêu Cổ Điện. Ta đã chứng kiến nhiều thế kỷ — ngươi không phải người đầu tiên muốn thứ ngươi không thể hiểu.",2,0,3
+m_hung_kill_yao,beast_elder_hung,kill_yao_enemy,"Ngươi tiêu diệt năm kẻ địch yêu tộc mà không mất bình tĩnh. Đó là tôn trọng — không phải chiến thắng.",3,2,0
+m_hung_know_history,beast_elder_hung,know_yao_history,"Ngươi biết lịch sử yêu tộc mà ít nhân tộc biết. Ta tự hỏi ngươi học từ đâu.",2,3,1
+m_tho_first_meet,beast_disciple_tho,first_meet,"Ngươi mới đến. Ngồi xuống — đừng vội. Con rùa của ta cũng muốn quan sát ngươi.",0,1,0
+m_tho_patient,beast_disciple_tho,show_patience,"Ngươi chờ đợi mà không bực bội. Con rùa của ta thích ngươi — đó là dấu hiệu tốt.",1,3,0
+m_huyet_join,blood_elder_huyet,join_sect,"Ngươi đã thắng khi gần chết. Tông môn ta chào đón ngươi.",2,0,2
+m_huyet_strong,blood_elder_huyet,show_power,"Ngươi mạnh hơn ta nghĩ. Ta sẽ để ý ngươi từ đây.",3,0,3
+m_huyet_blood_seal,blood_elder_huyet,blood_seal,"Huyết ấn đã được khắc. Ngươi thuộc về Huyết Uyên từ bây giờ — dù ngươi có muốn hay không.",0,-4,4
+m_am_first_meet,blood_disciple_am,first_meet,"Ngươi mới vào à. Tránh xa ta — không phải vì ta không thích ngươi. Mà vì ta không muốn ngươi nhìn thấy điều ta làm tiếp theo.",0,0,3
+m_am_fight_together,blood_disciple_am,fight_together,"Ngươi chiến đấu cạnh ta mà không bỏ chạy. Ít người làm được điều đó.",2,2,1
+m_bach_vo_danh_info,rogue_bach,give_info,"Ngươi trả tiền đúng hạn và không hỏi nguồn gốc. Đó là khách hàng lý tưởng của ta.",0,2,0
+m_bach_vo_danh_secret,rogue_bach,buy_secret,"Ngươi mua tin tức về bí cảnh từ ta. Ta bán thêm — nhưng giá lần sau sẽ cao hơn.",1,1,0
+m_bach_vo_danh_trust,rogue_bach,prove_trust,"Ngươi đã không phản bội ta khi có cơ hội. Ta không quên điều đó.",0,4,0
+m_lao_co_meet,rogue_lao_co,first_meet,"Ngươi tìm được ta ở đây. Điều đó không dễ — ta có thể nghe ngươi một lúc.",1,1,0
+m_lao_co_secret_realm,rogue_lao_co,ask_secret_realm,"Ngươi hỏi ta về bí cảnh không có trên bản đồ. Ta biết vài nơi — nhưng thông tin đó không miễn phí.",1,2,0
+m_lao_co_box,rogue_lao_co,ask_about_box,"Ngươi hỏi về chiếc hộp. Đừng hỏi nữa.",0,-1,1
+m_ma_thuong_buy,merchant_ma,buy_item,"Ngươi mua hàng của ta. Ta thích khách không hỏi quá nhiều.",0,1,0
+m_ma_thuong_haggle,merchant_ma,haggle,"Ngươi mặc cả với ta. Ta tôn trọng điều đó — nhưng đừng quá đáng.",0,0,0
+m_ma_thuong_thien_cac,merchant_ma,ask_sky_pavilion,"Ngươi hỏi ta về Thiên Các. Ta không trả lời câu hỏi đó.",0,-1,1
+m_nguyen_linh_buy,merchant_nguyen,buy_item,"Ngươi mua linh thảo của ta. Ta bán hàng thật — ngươi không cần kiểm tra.",0,2,0
+m_nguyen_linh_respect,merchant_nguyen,show_respect,"Ngươi cúi đầu với ta dù tu vi cao hơn ta nhiều. Ta nhớ người biết lễ nghĩa.",1,3,0
+m_nguyen_linh_son,merchant_nguyen,ask_about_son,"Ngươi hỏi về con trai ta. Hắn đang làm trưởng lão của một đại tông — ta không nói tông nào.",0,2,0
+m_tran_phong_meet,wanderer_tran,first_meet,"Ngươi tìm được ta. Không dễ — ta đang không muốn được tìm thấy.",1,0,0
+m_tran_phong_secret,wanderer_tran,share_secret,"Ngươi nói với ta điều mà ngươi không nói với ai. Đôi khi người không quen lại dễ nói chuyện hơn.",0,3,0
+m_tran_phong_past,wanderer_tran,ask_about_past,"Ngươi hỏi về quá khứ của ta. Ta sẽ không trả lời — nhưng ta không tức giận vì câu hỏi đó.",0,1,0
+m_diep_official_meet,imperial_envoy_diep,first_meet,"Ngươi gặp ta trong nhiệm vụ chính thức. Ta ghi nhận sự hiện diện của ngươi.",1,0,0
+m_diep_official_help,imperial_envoy_diep,help_official,"Ngươi hỗ trợ công việc của triều đình. Điều đó sẽ được ghi nhận ở nơi cần thiết.",2,2,0
+m_diep_secret_info,imperial_envoy_diep,give_info,"Ngươi cung cấp thông tin mà triều đình cần. Ta không hỏi ngươi lấy từ đâu.",2,3,0
+m_thien_cac_ghost_meet,sky_pavilion_ghost,first_meet,"Ngươi tìm thấy ta. Điều đó có nghĩa là ngươi đang hỏi đúng câu hỏi — hoặc sai câu hỏi.",1,0,1
+m_thien_cac_ghost_buy,sky_pavilion_ghost,buy_info,"Ngươi mua thông tin về Thiên Các từ ta. Ta không bán bằng linh thạch — ta muốn thứ khác.",0,2,1
+m_thien_cac_ghost_truth,sky_pavilion_ghost,discover_truth,"Ngươi hiểu rằng Thiên Các chưa biến mất. Ta chờ kẻ đủ thông minh để nhận ra điều đó lâu rồi.",3,4,2

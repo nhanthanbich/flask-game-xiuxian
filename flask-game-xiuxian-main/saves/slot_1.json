@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "saved_at": "05/06/2026 11:21",
+    "player_name": "Test",
+    "realm_id": "qi_refining_1",
+    "game_time": "02/02/Năm 1"
+  },
+  "player": {
+    "name": "Test",
+    "realm_id": "qi_refining_1",
+    "root_id": "metal",
+    "race_id": "human",
+    "age": 15,
+    "gender": "Nam",
+    "exp": 27,
+    "technique_slots": [
+      "metal_slash",
+      null,
+      null,
+      null
+    ],
+    "inventory": {
+      "red_restoration": 1,
+      "qi_pill_minor": 2
+    },
+    "is_demonic": false,
+    "demonic_arts_count": 0,
+    "demonic_corruption": 0,
+    "demonic_realm": null,
+    "demonic_breakthroughs": 0,
+    "secret_realms_cleared": [],
+    "in_seclusion": false,
+    "seclusion_location": null,
+    "seclusion_duration_remaining": 0,
+    "seclusion_start_date": null,
+    "quest_branch_flags": {},
+    "completed_branch_quests": [],
+    "quest_consequences": {}
+  },
+  "time": {
+    "year": 1,
+    "month": 2,
+    "day": 2,
+    "total_days": 31,
+    "display_short": "02/02/Năm 1"
+  },
+  "world_state": {
+    "player_sect": null,
+    "player_rank": 0,
+    "sect_power": {
+      "cloud_peak": 53,
+      "scarlet_flame": 53,
+      "wind_shadow": 50,
+      "deep_current": 51,
+      "iron_forge": 53,
+      "thunder_judgement": 51,
+      "poison_shadow": 50,
+      "golden_crane": 51,
+      "star_abyss": 49,
+      "void_flame": 52,
+      "yao_moon_alliance": 50,
+      "ancient_beast_palace": 50,
+      "blood_abyss": 49
+    },
+    "events_fired": [],
+    "npc_relations": {},
+    "npc_memories": {},
+    "npc_events_fired": [],
+    "world_history": [],
+    "combat_wins": 0,
+    "sect_contrib": 0,
+    "sim_year": 1
+  }
+}

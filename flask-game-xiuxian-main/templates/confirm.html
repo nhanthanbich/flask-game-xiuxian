@@ -1,0 +1,717 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="confirmation-container">
+  <!-- Heavenly Light Effect -->
+  <div class="heavenly-light"></div>
+
+  <!-- Main Panel -->
+  <div class="confirmation-panel">
+    <!-- Ornament Header -->
+    <div class="panel-ornament-large">
+      <span class="ornament-icon left">☰</span>
+      <h2 class="ornament-title">Thiên Mệnh Sơ Định</h2>
+      <span class="ornament-icon right">☰</span>
+    </div>
+
+    <!-- Character Display -->
+    <div class="character-display">
+      <!-- Avatar Section -->
+      <div class="avatar-section">
+        <div class="avatar-frame-large">
+          <div class="avatar-glow"></div>
+          <div class="avatar-inner">
+            <span class="avatar-icon-large">
+              {% if player.race_id == 'human' %}👤
+              {% elif player.race_id == 'mo' %}👿
+              {% elif player.race_id == 'yao' %}🐉
+              {% else %}☯{% endif %}
+            </span>
+          </div>
+          <div class="avatar-ring"></div>
+        </div>
+      </div>
+
+      <!-- Character Info -->
+      <div class="character-info-section">
+        <div class="name-display">
+          <span class="name-label">Đạo Hiệu</span>
+          <h1 class="character-name-large">{{ player.name }}</h1>
+        </div>
+
+        <div class="badges-container">
+          <div class="badge-row">
+            <div class="badge-box race-badge">
+              <span class="badge-icon">
+                {% if race.id == 'human' %}👤
+                {% elif race.id == 'mo' %}👿
+                {% elif race.id == 'yao' %}🐉
+                {% endif %}
+              </span>
+              <span class="badge-text">{{ race.name_vn }}</span>
+            </div>
+
+            <div class="badge-box root-badge" style="border-color: {{ rarity_color }};">
+              <span class="badge-icon" style="color: {{ rarity_color }};">✦</span>
+              <span class="badge-text" style="color: {{ rarity_color }};">{{ root.name_vn }}</span>
+            </div>
+          </div>
+
+          <div class="rarity-banner" style="background: linear-gradient(135deg, {{ rarity_color }}22, {{ rarity_color }}11); border: 1px solid {{ rarity_color }};">
+            <span class="rarity-text" style="color: {{ rarity_color }};">{{ rarity_text }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spiritual Root Description -->
+    <div class="root-description-panel">
+      <div class="desc-header">
+        <span class="desc-icon">📜</span>
+        <span class="desc-title">Linh Căn Mật Truyền</span>
+      </div>
+      <p class="root-desc-text">
+        {{ root.description }}
+      </p>
+      <div class="root-element">
+        <span class="element-label">Nguyên tố:</span>
+        <span class="element-value">{{ root.element }}</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons-large">
+      <form method="post" action="{{ url_for('confirm_game_submit') }}" class="action-form">
+        <!-- Name Input Section - INSIDE the form -->
+        <div class="name-input-section">
+          <div class="input-header">
+            <span class="input-icon">✦</span>
+            <label for="player_name" class="input-label">Nhập Đạo Hiệu Của Ngươi</label>
+          </div>
+          <input
+            type="text"
+            id="player_name"
+            name="player_name"
+            class="divine-input"
+            placeholder="Đạo hiệu (để trống = Tan Tu)"
+            maxlength="20"
+            autocomplete="off"
+            value="{{ player.name }}"
+          >
+          <div class="field-group">
+            <div class="field-item">
+              <label for="player_gender" class="input-label">Giới tính</label>
+              <select id="player_gender" name="player_gender" class="divine-select">
+                <option value="Nam" {% if player.gender == 'Nam' %}selected{% endif %}>Nam</option>
+                <option value="Nữ" {% if player.gender == 'Nữ' %}selected{% endif %}>Nữ</option>
+                <option value="Không xác định" {% if player.gender == 'Không xác định' %}selected{% endif %}>Không xác định</option>
+              </select>
+            </div>
+          </div>
+          <p class="input-hint">Tuổi bắt đầu sẽ luôn là 15 tuổi khi khởi đầu.</p>
+        </div>
+
+        <button class="btn-divine">
+          <span class="btn-glow"></span>
+          <span class="btn-content">
+            <span class="btn-icon">⚡</span>
+            Bắt Đầu Tu Tiên
+          </span>
+        </button>
+      </form>
+
+      <form method="post" action="{{ url_for('cancel_new_game') }}" class="action-form">
+        <button class="btn-cancel">
+          <span class="btn-content">
+            <span class="btn-icon">✕</span>
+            Tái Lập Dao Tam
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Floating Particles -->
+  <div class="floating-particles">
+    <div class="particle" style="animation-delay: 0s;"></div>
+    <div class="particle" style="animation-delay: 1s;"></div>
+    <div class="particle" style="animation-delay: 2s;"></div>
+    <div class="particle" style="animation-delay: 3s;"></div>
+    <div class="particle" style="animation-delay: 4s;"></div>
+    <div class="particle" style="animation-delay: 0.5s;"></div>
+    <div class="particle" style="animation-delay: 1.5s;"></div>
+    <div class="particle" style="animation-delay: 2.5s;"></div>
+  </div>
+</div>
+
+<style>
+  .confirmation-container {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+    overflow: hidden;
+    background: radial-gradient(ellipse at top, rgba(79, 209, 165, 0.05) 0%, transparent 50%);
+  }
+
+  .heavenly-light {
+    position: absolute;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle,
+      rgba(255, 200, 71, 0.15) 0%,
+      rgba(79, 209, 165, 0.1) 30%,
+      transparent 70%
+    );
+    filter: blur(40px);
+    animation: lightPulse 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes lightPulse {
+    0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+  }
+
+  .confirmation-panel {
+    position: relative;
+    max-width: 800px;
+    width: 100%;
+    background: linear-gradient(135deg,
+      rgba(8, 8, 15, 0.98) 0%,
+      rgba(12, 12, 22, 0.95) 100%
+    );
+    border: 2px solid transparent;
+    border-image: linear-gradient(135deg,
+      rgba(79, 209, 165, 0.5) 0%,
+      rgba(255, 200, 71, 0.4) 100%
+    ) 1;
+    padding: var(--space-2xl);
+    box-shadow:
+      0 30px 100px rgba(0, 0, 0, 0.8),
+      0 0 150px rgba(79, 209, 165, 0.15);
+    animation: panelAppear 1s ease-out;
+    z-index: 2;
+  }
+
+  @keyframes panelAppear {
+    from {
+      opacity: 0;
+      transform: translateY(50px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* Ornament Header */
+  .panel-ornament-large {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 2px solid rgba(79, 209, 165, 0.3);
+    position: relative;
+  }
+
+  .ornament-icon {
+    font-size: 2.5rem;
+    color: var(--jade-essence);
+    opacity: 0.7;
+    animation: iconPulse 2s ease-in-out infinite;
+  }
+
+  .ornament-icon.left { animation-delay: 0s; }
+  .ornament-icon.right { animation-delay: 1s; }
+
+  @keyframes iconPulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  .ornament-title {
+    font-family: var(--font-script);
+    font-size: 2rem;
+    color: var(--celestial-gold);
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 30px rgba(255, 200, 71, 0.6);
+    margin: 0;
+  }
+
+  /* Character Display */
+  .character-display {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xl);
+    margin: var(--space-2xl) 0;
+    padding: var(--space-xl);
+    background: rgba(15, 15, 25, 0.6);
+    border: 1px solid rgba(79, 209, 165, 0.15);
+    border-radius: 4px;
+  }
+
+  /* Avatar */
+  .avatar-section {
+    flex-shrink: 0;
+  }
+
+  .avatar-frame-large {
+    position: relative;
+    width: 160px;
+    height: 160px;
+  }
+
+  .avatar-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(79, 209, 165, 0.4) 0%,
+      rgba(255, 200, 71, 0.3) 40%,
+      transparent 70%
+    );
+    animation: avatarGlow 3s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  @keyframes avatarGlow {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  }
+
+  .avatar-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(20, 20, 35, 0.98) 0%,
+      rgba(15, 15, 25, 0.95) 100%
+    );
+    border: 3px solid var(--jade-essence);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .avatar-icon-large {
+    font-size: 5rem;
+    opacity: 0.95;
+  }
+
+  .avatar-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 160px;
+    height: 160px;
+    border: 1px solid rgba(255, 200, 71, 0.4);
+    border-radius: 50%;
+    animation: ringRotate 20s linear infinite;
+    z-index: 2;
+  }
+
+  @keyframes ringRotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  /* Character Info */
+  .character-info-section {
+    flex: 1;
+  }
+
+  .name-display {
+    margin-bottom: var(--space-lg);
+  }
+
+  .name-label {
+    font-size: 0.8rem;
+    color: var(--spirit-silver);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    display: block;
+    margin-bottom: var(--space-xs);
+  }
+
+  .character-name-large {
+    font-family: var(--font-script);
+    font-size: 3rem;
+    color: var(--celestial-gold);
+    margin: 0;
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 40px rgba(255, 200, 71, 0.7);
+  }
+
+  /* Badges */
+  .badges-container {
+    margin-bottom: var(--space-lg);
+  }
+
+  .badge-row {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .badge-box {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(20, 20, 30, 0.6);
+    border: 2px solid var(--spirit-silver);
+    border-radius: 3px;
+  }
+
+  .race-badge {
+    border-color: var(--spirit-silver);
+  }
+
+  .badge-icon {
+    font-size: 1.5em;
+    color: var(--spirit-silver);
+  }
+
+  .badge-text {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .rarity-banner {
+    padding: var(--space-sm) var(--space-md);
+    border-radius: 3px;
+    text-align: center;
+    display: inline-block;
+  }
+
+  .rarity-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  /* Root Description */
+  .root-description-panel {
+    margin: var(--space-xl) 0;
+    padding: var(--space-lg);
+    background: rgba(15, 15, 25, 0.5);
+    border-left: 3px solid var(--jade-essence);
+    border-radius: 3px;
+  }
+
+  .desc-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid rgba(79, 209, 165, 0.2);
+  }
+
+  .desc-icon {
+    font-size: 1.5em;
+    opacity: 0.7;
+  }
+
+  .desc-title {
+    font-family: var(--font-script);
+    color: var(--jade-essence);
+    font-size: 1.1em;
+    letter-spacing: 0.1em;
+  }
+
+  .root-desc-text {
+    color: var(--moonlight-silver);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: var(--space-md);
+    font-style: italic;
+  }
+
+  .root-element {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.9rem;
+  }
+
+  .element-label {
+    color: var(--spirit-silver);
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.1em;
+  }
+
+  .element-value {
+    color: var(--jade-essence);
+    font-weight: 600;
+  }
+
+  /* Action Buttons */
+  .action-buttons-large {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    flex-wrap: wrap;
+  }
+
+  .action-form {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .btn-divine {
+    width: 100%;
+    padding: var(--space-lg) var(--space-xl);
+    border: 2px solid var(--celestial-gold);
+    background: linear-gradient(135deg,
+      rgba(45, 35, 20, 0.95) 0%,
+      rgba(60, 50, 30, 0.95) 100%
+    );
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--celestial-gold);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-divine .btn-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle,
+      rgba(255, 200, 71, 0.3) 0%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .btn-divine:hover .btn-glow {
+    opacity: 1;
+  }
+
+  .btn-divine:hover {
+    background: linear-gradient(135deg,
+      rgba(55, 45, 30, 1) 0%,
+      rgba(70, 60, 40, 1) 100%
+    );
+    box-shadow:
+      0 0 40px rgba(255, 200, 71, 0.6),
+      0 0 80px rgba(255, 200, 71, 0.3);
+    transform: translateY(-3px);
+  }
+
+  .btn-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  .btn-cancel {
+    width: 100%;
+    padding: var(--space-lg) var(--space-xl);
+    border: 1.5px solid var(--spirit-silver);
+    background: rgba(18, 18, 28, 0.8);
+    color: var(--spirit-silver);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .btn-cancel:hover {
+    border-color: var(--blood-crystal);
+    color: var(--blood-crystal);
+    background: rgba(40, 15, 15, 0.9);
+  }
+
+  /* Floating Particles */
+  .floating-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--jade-essence);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFloat 6s ease-in-out infinite;
+  }
+
+  @keyframes particleFloat {
+    0% {
+      transform: translateY(100vh) translateX(0);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.6;
+    }
+    90% {
+      opacity: 0.4;
+    }
+    100% {
+      transform: translateY(-20vh) translateX(50px);
+      opacity: 0;
+    }
+  }
+
+  .particle:nth-child(odd) {
+    background: var(--celestial-gold);
+  }
+
+  /* Name Input Section */
+  .name-input-section {
+    margin-bottom: var(--space-xl);
+    padding: var(--space-lg);
+    background: rgba(15, 15, 25, 0.6);
+    border: 1px solid rgba(79, 209, 165, 0.2);
+    border-radius: 4px;
+  }
+
+  .input-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .input-icon {
+    font-size: 1.5em;
+    color: var(--celestial-gold);
+  }
+
+  .input-label {
+    font-family: var(--font-script);
+    color: var(--celestial-gold);
+    font-size: 1.1em;
+    letter-spacing: 0.1em;
+  }
+
+  .divine-input {
+    width: 100%;
+    padding: var(--space-md);
+    background: rgba(8, 8, 15, 0.9);
+    border: 2px solid rgba(79, 209, 165, 0.4);
+    border-radius: 3px;
+    color: var(--moonlight-silver);
+    font-family: var(--font-script);
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  .divine-input:focus {
+    border-color: var(--celestial-gold);
+    box-shadow: 0 0 25px rgba(255, 200, 71, 0.3);
+    background: rgba(12, 12, 22, 0.95);
+  }
+
+  .divine-input::placeholder {
+    color: var(--spirit-silver);
+    opacity: 0.5;
+    font-style: italic;
+  }
+
+  .field-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+  }
+
+  .field-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .divine-select {
+    width: 100%;
+    padding: var(--space-md);
+    border-radius: 3px;
+    border: 2px solid rgba(79, 209, 165, 0.4);
+    background: rgba(8, 8, 15, 0.95);
+    color: var(--moonlight-silver);
+    font-family: var(--font-script);
+    font-size: 1.1rem;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  .divine-select:focus {
+    border-color: var(--celestial-gold);
+    box-shadow: 0 0 25px rgba(255, 200, 71, 0.3);
+    background: rgba(12, 12, 22, 0.95);
+  }
+
+  .input-hint {
+    font-size: 0.8rem;
+    color: var(--spirit-silver);
+    margin-top: var(--space-sm);
+    font-style: italic;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 767px) {
+    .character-display {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .character-name-large {
+      font-size: 2.5rem;
+    }
+
+    .action-buttons-large {
+      flex-direction: column;
+    }
+
+    .action-form {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
